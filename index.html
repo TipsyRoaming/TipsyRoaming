@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HC3B37FCGM"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -10,7 +9,6 @@
       gtag('config', 'G-HC3B37FCGM');
     </script>
 
-    <!-- Microsoft Clarity -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -18,6 +16,10 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "wh2ke1h2lp");
     </script>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
 
     <meta charset="utf-8">
     <title>TipsyRoaming | Strolling in Baguio</title>
@@ -41,40 +43,6 @@
     <link rel="canonical" href="https://tipsyroaming.github.io/TipsyRoaming/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="img/logo.png">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "WebSite",
-          "@id": "https://tipsyroaming.github.io/TipsyRoaming/#website",
-          "url": "https://tipsyroaming.github.io/TipsyRoaming/",
-          "name": "TipsyRoaming",
-          "alternateName": "TipsyRoaming | Strolling in Baguio",
-          "inLanguage": "en"
-        },
-        {
-          "@type": "TravelGuide",
-          "@id": "https://tipsyroaming.github.io/TipsyRoaming/#guide",
-          "name": "TipsyRoaming",
-          "url": "https://tipsyroaming.github.io/TipsyRoaming/",
-          "logo": "https://tipsyroaming.github.io/TipsyRoaming/img/logo.png",
-          "image": "https://tipsyroaming.github.io/TipsyRoaming/img/OG_image.jpg",
-          "description": "Truly Inspiring Places Spark Your Roaming Odyssey, Awakening Magic In Nature's Grandeur.",
-          "about": {
-            "@type": "Place",
-            "name": "Baguio City",
-            "address": {
-              "@type": "PostalAddress",
-              "addressLocality": "Baguio City",
-              "addressCountry": "PH"
-            }
-          }
-        }
-      ]
-    }
-    </script>
 
     <style>
         :root {
@@ -114,6 +82,16 @@
         .text-logo { text-decoration: none; display: flex; align-items: flex-start; position: relative; padding-top: 10px; }
         .logo-tipsy { font-family: 'Dancing Script', cursive; color: var(--lazy-purple); font-size: 2.3rem; font-style: italic; position: absolute; top: -15px; left: -5px; z-index: 2; transform: rotate(-5deg); letter-spacing: -1px; }
         .logo-roaming { font-family: var(--font-family); font-weight: 600; font-size: 1.5rem; background: linear-gradient(to bottom, #fdfc92 0%, #d4af37 50%, #b8860b 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; position: relative; z-index: 1; letter-spacing: 2px; padding-left: 5px; }
+
+        /* 搜尋框樣式 */
+        .ga4-search-container { position: relative; margin-left: auto; margin-right: 20px; }
+        #ga4SearchForm { display: flex; align-items: center; background: rgba(0,0,0,0.5); border: 1px solid var(--accent-gold); border-radius: 20px; padding: 2px 5px; }
+        .search-input { background: transparent; border: none; color: #fff; padding: 5px 12px; outline: none; width: 150px; font-size: 0.8rem; }
+        .search-btn { background: transparent; border: none; color: var(--accent-gold); cursor: pointer; padding: 5px 8px; }
+        .search-results-dropdown { position: absolute; top: 45px; left: 0; width: 100%; background: var(--form-bg); border: 1px solid var(--accent-gold); border-radius: 5px; max-height: 250px; overflow-y: auto; display: none; z-index: 1001; }
+        .search-item { padding: 10px; display: block; color: #fff; text-decoration: none; border-bottom: 1px solid #333; font-size: 0.85rem; }
+        .search-item:hover { background: rgba(212, 175, 55, 0.2); }
+        .search-item small { color: var(--accent-gold); display: block; margin-top: 3px; }
 
         nav ul { list-style: none; display: flex; margin: 0; padding: 0; align-items: center;}
         nav ul li { margin-left: 25px; }
@@ -155,29 +133,18 @@
         .school-link { background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.2); color: var(--mist-white); padding: 15px; text-align: center; text-decoration: none; transition: 0.3s; font-size: 0.85rem; letter-spacing: 1px; backdrop-filter: blur(5px); }
         .school-link:hover { background: rgba(212, 175, 55, 0.25); border-color: var(--accent-gold); color: #fff; }
 
-        /* 旅遊區塊左右並排容器 */
-        .travel-container {
-            display: flex;
-            gap: 30px;
-            margin-top: 20px;
-        }
-        
-        .travel-column {
-            flex: 1;
-            min-width: 300px;
-        }
+        .travel-container { display: flex; gap: 30px; margin-top: 20px; }
+        .travel-column { flex: 1; min-width: 300px; }
 
-<head>
-    <!-- 這裡原本就有的 meta 和 script 標籤... -->
-
-    <style>
-        /* 1. 這裡保留您原本所有的 CSS 設定 (如 :root, body, header 等) */
-        :root { ... }
-        body { ... }
+        .reviews-list { margin-top: 20px; max-height: 400px; overflow-y: auto; }
+        .review-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 5px; margin-bottom: 10px; border-left: 3px solid var(--accent-gold); }
 
         @media (max-width: 768px) {
-            header { padding: 0 25px; height: 110px;}
-            header nav { display: none; }
+            header { padding: 0 25px; height: auto; flex-direction: column; padding-bottom: 15px; }
+            header nav { margin-top: 15px; }
+            .ga4-search-container { margin: 15px 0; width: 100%; }
+            #ga4SearchForm { width: 100%; }
+            .search-input { width: 100%; }
             .school-grid { grid-template-columns: 1fr 1fr; }
             .info-dashboard { flex-direction: column; gap: 20px; padding: 20px; width: 100%; }
             .travel-container { flex-direction: column; }
@@ -186,38 +153,21 @@
 </head>
 <body>
 
-    
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyCpFFGoo_4B7njF21nWf9oooUVgELLLUL0",
-    authDomain: "tipsyroaming-c763c.firebaseapp.com",
-    projectId: "tipsyroaming-c763c",
-    storageBucket: "tipsyroaming-c763c.firebasestorage.app",
-    messagingSenderId: "499606815652",
-    appId: "1:499606815652:web:77d9490f4c4cb63964b731",
-    measurementId: "G-DH97F1E33H"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-</script>
-
-
     <div id="backToTop" title="Back to Top"><i class="fas fa-chevron-up"></i></div>
 
     <header>
         <a href="index2.html" class="text-logo">
             <span class="logo-tipsy">Tipsy</span><span class="logo-roaming">Roaming</span>
         </a>
+        
+        <div class="ga4-search-container">
+            <form action="" method="GET" id="ga4SearchForm">
+                <input type="text" name="q" id="searchInput" class="search-input" placeholder="Search Reviews & Schools..." autocomplete="off">
+                <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+            </form>
+            <div id="searchResults" class="search-results-dropdown"></div>
+        </div>
+
         <nav>
             <ul>
                 <li><a href="#about" class="lang-text" data-en="About" data-zh="關於" data-jp="概要">About</a></li>
@@ -266,8 +216,7 @@
         <section id="about">
             <h3 class="lang-text" data-en="Why Visit Baguio?" data-zh="為什麼造訪碧瑤？" data-jp="なぜバギオを訪れるのか？">Why Visit Baguio?</h3>
             <div class="about-text" id="about-content">
-                <p>Strolling through Baguio at an altitude of 1,500 meters, the air is ever-infused with a delicate scent of pine and gentle mist. Gone is the sweltering heat and clamor of Manila, replaced by a refreshing crispness that feels like perpetual spring.</p><p>The "slowness" here possesses a soul of its own. You might find yourself rowing across Burnham Park Lake under a setting sun, or lost in a book at an artistic bistro, accompanied by the cool mountain breeze. For students and seekers, the local warmth is as comforting as the sturdy pines. Within this odyssey of learning and roaming, one always finds the most tranquil sanctuary in the "Summer Capital." It is more than just a stay in a foreign land; it is a profound dialogue with oneself above the clouds.</p>
-            </div>
+                </div>
         </section>
 
         <section id="study">
@@ -284,34 +233,35 @@
             </div>
             <div class="member-section">
                 <div class="form-group">
-                    <textarea class="editor-area lang-placeholder" data-en="Write review..." data-zh="撰寫評價..." data-jp="レビューを書く..." placeholder="Write review..."></textarea>
-                    <button class="btn-submit lang-text" data-en="Publish" data-zh="發佈" data-jp="公開">Publish</button>
+                    <textarea id="input-study" class="editor-area lang-placeholder" data-en="Write review..." data-zh="撰寫評價..." data-jp="レビューを書く..." placeholder="Write review..."></textarea>
+                    <button onclick="saveReview('study')" class="btn-submit lang-text" data-en="Publish" data-zh="發佈" data-jp="公開">Publish</button>
                 </div>
+                <div id="display-study" class="reviews-list"></div>
             </div>
         </section>
-        
+
         <section id="travel">
             <h3 class="lang-text" data-en="Travel in Baguio" data-zh="碧瑤旅遊" data-jp="バギオの観光">Travel in Baguio</h3>
             <div class="travel-container">
                 <div class="travel-column">
                     <h4 class="lang-text" data-en="Sightseeing" data-zh="熱門景點" data-jp="人気の観光スポット">Sightseeing</h4>
-                    <div class="school-grid"></div>
                     <div class="member-section">
                         <div class="form-group">
-                            <textarea class="editor-area lang-placeholder" data-en="Share sightseeing tips..." data-zh="分享景點心得..." data-jp="観光の感想を共有..." placeholder="Share sightseeing tips..."></textarea>
-                            <button class="btn-submit lang-text" data-en="Publish" data-zh="發佈" data-jp="公開">Publish</button>
+                            <textarea id="input-sightseeing" class="editor-area lang-placeholder" data-en="Share sightseeing tips..." data-zh="分享景點心得..." data-jp="観光の感想を共有..." placeholder="Share sightseeing tips..."></textarea>
+                            <button onclick="saveReview('sightseeing')" class="btn-submit lang-text" data-en="Publish" data-zh="發佈" data-jp="公開">Publish</button>
                         </div>
+                        <div id="display-sightseeing" class="reviews-list"></div>
                     </div>
                 </div>
                 
                 <div class="travel-column">
                     <h4 class="lang-text" data-en="Gourmet" data-zh="在地美食" data-jp="絶品グルメ">Gourmet</h4>
-                    <div class="school-grid"></div>
                     <div class="member-section">
                         <div class="form-group">
-                            <textarea class="editor-area lang-placeholder" data-en="Share food reviews..." data-zh="分享美食心得..." data-jp="グルメの感想を共有..." placeholder="Share food reviews..."></textarea>
-                            <button class="btn-submit lang-text" data-en="Publish" data-zh="發佈" data-jp="公開">Publish</button>
+                            <textarea id="input-gourmet" class="editor-area lang-placeholder" data-en="Share food reviews..." data-zh="分享美食心得..." data-jp="グルメの感想を共有..." placeholder="Share food reviews..."></textarea>
+                            <button onclick="saveReview('gourmet')" class="btn-submit lang-text" data-en="Publish" data-zh="發佈" data-jp="公開">Publish</button>
                         </div>
+                        <div id="display-gourmet" class="reviews-list"></div>
                     </div>
                 </div>
             </div>
@@ -337,7 +287,27 @@
     <footer><p>&copy; 2026 TipsyRoaming. Exploring the Pine City, one step at a time.</p></footer>
 
     <script>
+        // 將您給的金鑰轉為 Compat 寫法，並補上 missing 的 databaseURL
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpFFGoo_4B7njF21nWf9oooUVgELLLUL0",
+            authDomain: "tipsyroaming-c763c.firebaseapp.com",
+            databaseURL: "https://tipsyroaming-c763c-default-rtdb.firebaseio.com", // 這一行非常重要，沒有它無法存資料
+            projectId: "tipsyroaming-c763c",
+            storageBucket: "tipsyroaming-c763c.firebasestorage.app",
+            messagingSenderId: "499606815652",
+            appId: "1:499606815652:web:77d9490f4c4cb63964b731",
+            measurementId: "G-DH97F1E33H"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const analytics = firebase.analytics();
+
         let currentLang = 'en';
+        
+        // 用來存放從 Firebase 抓下來的「動態使用者評論」，讓它們變得可被搜尋
+        let dynamicSearchData = [];
 
         const holidayData = {
             zh: { m1: "碧瑤花節慶典", m2: "碧瑤花節慶典", m4: "復活節聖週", m9: "碧瑤建市紀念日", m12: "聖誕佳節", default: "探索避暑之都" },
@@ -350,6 +320,18 @@
             jp: { about: '<p>標高1,500メートルのバギオを散策すれば、空気の中にはいつもほのかな松の香りと薄霧が漂っています。マニラの酷暑や喧騒とは無縁の、まるで一年中春のような爽やかさがここにはあります。</p><p>この街の「ゆったりとした時間」には、魂が宿っています。バーナム公園で夕日を眺めながらボートを漕いだり、芸術的な香りが漂うレストランで、山城の涼やかな風を感じながら一冊の本を読み耽ったり。留学生にとって、人々の温かさは穏やかな松の木のように親しみ深く、学びと放浪の「オデッセイ」の中で、この「夏の首都」はいつも心に安らぎを与えてくれます。これは単なる異国での滞在ではなく、雲の上で行われる自分自身との対話なのです。</p>' },
             en: { about: '<p>Strolling through Baguio at an altitude of 1,500 meters, the air is ever-infused with a delicate scent of pine and gentle mist. Gone is the sweltering heat and clamor of Manila, replaced by a refreshing crispness that feels like perpetual spring.</p><p>The "slowness" here possesses a soul of its own. You might find yourself rowing across Burnham Park Lake under a setting sun, or lost in a book at an artistic bistro, accompanied by the cool mountain breeze. For students and seekers, the local warmth is as comforting as the sturdy pines. Within this odyssey of learning and roaming, one always finds the most tranquil sanctuary in the "Summer Capital." It is more than just a stay in a foreign land; it is a profound dialogue with oneself above the clouds.</p>' }
         };
+
+        // 靜態學校資料庫
+        const staticSearchData = [
+            { name: "WALES", type: "School", link: "#study" },
+            { name: "BECI", type: "School", link: "#study" },
+            { name: "PINES", type: "School", link: "#study" },
+            { name: "JIC", type: "School", link: "#study" },
+            { name: "MONOL", type: "School", link: "#study" },
+            { name: "HELP", type: "School", link: "#study" },
+            { name: "CNS", type: "School", link: "#study" },
+            { name: "ANJ", type: "School", link: "#study" }
+        ];
 
         function updateDynamicInfo() {
             const month = new Date().getMonth() + 1;
@@ -385,6 +367,98 @@
             }
         }
 
+        // Firebase 資料寫入功能
+        function saveReview(type) {
+            const content = document.getElementById(`input-${type}`).value;
+            if(!content.trim()) return alert("Please enter some text.");
+            
+            // 寫入到 Firebase Realtime Database
+            database.ref('reviews/' + type).push({
+                content: content,
+                lang: currentLang,
+                timestamp: Date.now()
+            }).then(() => {
+                alert("Published Successfully!");
+                document.getElementById(`input-${type}`).value = ""; // 清空輸入框
+            }).catch((error) => {
+                alert("Error saving review. Did you enable 'Test Mode' in Firebase Rules? Error details: " + error.message);
+            });
+        }
+
+        // Firebase 資料讀取 + 自動推入動態搜尋庫
+        function loadReviews(type) {
+            database.ref('reviews/' + type).on('value', (snapshot) => {
+                const display = document.getElementById(`display-${type}`);
+                display.innerHTML = "";
+                
+                // 每次資料庫更新時，清空舊的同類型搜尋記錄，避免重複
+                dynamicSearchData = dynamicSearchData.filter(r => r.category !== type);
+
+                snapshot.forEach((child) => {
+                    const review = child.val();
+                    const card = `<div class="review-card"><small>${new Date(review.timestamp).toLocaleDateString()} [${review.lang}]</small><p>${review.content}</p></div>`;
+                    display.innerHTML = card + display.innerHTML; // 最新的在上面
+
+                    // 將使用者的心得推入動態搜尋庫，使心得變得可以被搜尋
+                    dynamicSearchData.push({
+                        content: review.content,
+                        category: type, // study, sightseeing, or gourmet
+                        link: type === 'study' ? '#study' : '#travel'
+                    });
+                });
+            });
+        }
+
+        // 即時搜尋邏輯 (結合靜態學校與動態使用者心得)
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('input', function() {
+            const val = this.value.toLowerCase();
+            searchResults.innerHTML = '';
+            if(!val) { searchResults.style.display = 'none'; return; }
+
+            // 1. 搜尋靜態的學校名稱
+            const filteredStatic = staticSearchData.filter(item => item.name.toLowerCase().includes(val));
+            
+            // 2. 搜尋使用者動態輸入的 Firebase 心得內容
+            const filteredDynamic = dynamicSearchData.filter(item => item.content.toLowerCase().includes(val));
+
+            if(filteredStatic.length > 0 || filteredDynamic.length > 0) {
+                searchResults.style.display = 'block';
+                
+                // 顯示學校結果
+                filteredStatic.forEach(item => {
+                    const a = document.createElement('a');
+                    a.href = item.link;
+                    a.className = 'search-item';
+                    a.innerHTML = `<strong>${item.name}</strong> <small>School Info</small>`;
+                    a.onclick = () => { searchResults.style.display = 'none'; searchInput.value = ''; };
+                    searchResults.appendChild(a);
+                });
+
+                // 顯示使用者心得結果
+                filteredDynamic.forEach(item => {
+                    const a = document.createElement('a');
+                    a.href = item.link;
+                    a.className = 'search-item';
+                    let snippet = item.content.length > 25 ? item.content.substring(0, 25) + '...' : item.content;
+                    a.innerHTML = `<strong>"${snippet}"</strong> <small>User Review in ${item.category.toUpperCase()}</small>`;
+                    a.onclick = () => { searchResults.style.display = 'none'; searchInput.value = ''; };
+                    searchResults.appendChild(a);
+                });
+            } else {
+                searchResults.style.display = 'none';
+            }
+        });
+
+        // 點擊外面關閉搜尋選單
+        document.addEventListener('click', (e) => {
+            if(!document.querySelector('.ga4-search-container').contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             const hoverTargets = document.querySelectorAll('.track-hover');
             hoverTargets.forEach(target => {
@@ -402,6 +476,12 @@
 
         fetchWeather();
         updateDynamicInfo();
+        
+        // 初始化頁面
+        changeLanguage('en');
+        loadReviews('study');
+        loadReviews('sightseeing');
+        loadReviews('gourmet');
     </script>
 </body>
 </html>
