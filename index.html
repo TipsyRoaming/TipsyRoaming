@@ -175,45 +175,6 @@
         :root { ... }
         body { ... }
 
-/* --- 這裡是新增的橫幅廣告 CSS --- */
-        .promo-banner {
-            width: 100%;
-            background-color: var(--widget-bg);
-            text-align: center;
-            position: relative;
-            padding: 10px 0;
-            margin-top: 100px; 
-            border-bottom: 1px solid var(--accent-gold);
-            z-index: 999;
-        }
-
-        .banner-img {
-            max-width: 95%;
-            height: auto;
-            max-height: 120px;
-            border-radius: 4px;
-            transition: 0.3s;
-        }
-
-        .banner-img:hover {
-            transform: scale(1.01);
-        }
-
-        .banner-close {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--accent-gold);
-            cursor: pointer;
-            font-size: 24px;
-        }
-
-        @media (max-width: 768px) {
-            .promo-banner { margin-top: 110px; }
-        }
-        /* --- 新增結束 --- */
-
         @media (max-width: 768px) {
             header { padding: 0 25px; height: 110px;}
             header nav { display: none; }
@@ -251,15 +212,6 @@
             <button class="btn-register lang-text" data-en="Join Us" data-zh="加入我們" data-jp="参加する" onclick="window.location.href='#register'">Join Us</button>
         </div>
     </header>
-
-<!-- --- 這裡是新增的橫幅廣告 HTML --- -->
-    <div class="promo-banner">
-        <a href="#travel" onclick="gtag('event', 'ad_click', {'ad_name': 'Burnham_Park_Banner'});">
-            <img src="img/Banner%20-%20Burnham%20Park.jpeg" alt="Burnham Park Special" class="banner-img">
-        </a>
-        <span class="banner-close" onclick="this.parentElement.style.display='none'">&times;</span>
-    </div>
-    <!-- --- 新增結束 --- -->
 
     <main>
         <section id="hero">
