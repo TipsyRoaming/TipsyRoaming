@@ -53,3 +53,38 @@ export async function saveReview(type, btn, currentLang) {
         alert("Error saving review: " + error.message);
     });
 }
+
+export function listenReviews(type, callback) {
+    const dbRef = ref(db, `reviews/${type}`);
+    onValue(dbRef, (snapshot) => {
+        const display = document.getElementById(`display-${type}`);
+        display.replaceChildren();
+        
+        const tempCategoryReviews = [];
+
+        snapshot.forEach((child) => {
+            const review = child.val();
+            const card = document.createElement('div');
+            card.className = 'review-card';
+            
+            const metaInfo = document.createElement('small');
+            metaInfo.textContent = `${new Date(review.timestamp).toLocaleDateString()} [${review.lang}]`;
+            
+            const messageBody = document.createElement('p');
+            messageBody.textContent = review.content;
+            
+            card.appendChild(metaInfo);
+            card.appendChild(messageBody);
+            display.prepend(card);
+
+            tempCategoryReviews.push({
+                content: review.content,
+                category: type,
+                link: type === 'study' ? '#study' : '#travel'
+            });
+        });
+        
+        // 將更新好的分類陣列傳回給主程式
+        callback(type, tempCategoryReviews);
+    });
+}
