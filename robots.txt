@@ -1,40 +1,35 @@
-User-agent: GPTBot
-Disallow: /
+User-agent:GPTBot 
+Disallow:/ 
+User-agent:ChatGPT-User 
+Disallow:/ 
+User-agent:Googlebot-Extended 
+Disallow:/ 
+User-agent:CCBot 
+Disallow:/ 
+User-agent:AnthropicAI 
+Disallow:/ 
+User-agent:Claude-Web 
+Disallow:/ 
 
-User-agent: ChatGPT-User
-Disallow: /
+User-agent Googlebot-Image 
+Disallow:/ 
+User-agent:MSNBot-Media 
+Disallow:/ 
+User-agent:Baiduspider-image 
+Disallow:/ 
 
-User-agent: Googlebot-Extended
-Disallow: /
+User-agent: * 
+Allow:/ 
 
-User-agent: CCBot
-Disallow: /
+Disallow:/*.jpg$ 
+Disallow:/*.jpeg$ 
+Disallow:/*.png$ 
+Disallow:/*.gif$ 
+Disallow:/*.svg$ 
+Disallow:/*.webp$ 
+Disallow:/img/ 
 
-User-agent: AnthropicAI
-Disallow: /
+Disallow:/cgi-bin/ 
+Disallow:/private/ 
 
-User-agent: Claude-Web
-Disallow: /
-
-User-agent: Googlebot-Image
-Disallow: /
-
-User-agent: MSNBot-Media
-Disallow: /
-
-User-agent: Baiduspider-image
-Disallow: /
-
-User-agent: *
-Allow: /
-Disallow: /*.jpg$
-Disallow: /*.jpeg$
-Disallow: /*.png$
-Disallow: /*.gif$
-Disallow: /*.svg$
-Disallow: /*.webp$
-Disallow: /img/
-Disallow: /cgi-bin/
-Disallow: /private/
-
-Sitemap: https://tipsyroaming.github.io/TipsyRoaming/sitemap.xml
+Sitemap:https://tipsyroaming.github.io/TipsyRoaming/sitemap.xml
