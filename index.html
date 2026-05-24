@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data: blob:; script-src 'self' https://www.googletagmanager.com https://www.gstatic.com https://www.clarity.ms 'unsafe-inline'; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline'; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src https://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://api.open-meteo.com https://www.google-analytics.com https://region1.google-analytics.com wss://*.firebaseio.com;">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        img-src 'self' https: data: blob:;
+        script-src 'self' https://www.googletagmanager.com https://www.gstatic.com https://www.clarity.ms https://scripts.clarity.ms 'unsafe-inline';
+        style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com 'unsafe-inline';
+        font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+        connect-src 'self' ws://127.0.0.1:5500 ws://localhost:5500 https://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://api.open-meteo.com https://www.google-analytics.com https://region1.google-analytics.com wss://*.firebaseio.com https://www.gstatic.com https://*.clarity.ms;
+    ">
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HC3B37FCGM"></script>
     <script>
@@ -97,7 +104,10 @@
 
         <section id="about">
             <h3 class="lang-text" data-i18n-nav="whyVisit">Why Visit Baguio?</h3>
-            <div class="about-text" id="about-content"></div>
+            <div class="about-text" id="about-content">
+                <p>Strolling through Baguio at an altitude of 1,500 meters, the air is ever-infused with a delicate scent of pine and gentle mist. Gone is the sweltering heat and clamor of Manila, replaced by a refreshing crispness that feels like perpetual spring.</p>
+                <p>The "slowness" here possesses a soul of its own. You might find yourself rowing across Burnham Park Lake under a setting sun, or lost in a book at an artistic bistro, accompanied by the cool mountain breeze. For students and seekers, the local warmth is as comforting as the sturdy pines. Within this odyssey of learning and roaming, one always finds the most tranquil sanctuary in the "Summer Capital." It is more than just a stay in a foreign land; it is a profound dialogue with oneself above the clouds.</p>
+            </div>
         </section>
 
         <section id="study">
@@ -168,8 +178,10 @@
              </div>
         </section>
     </main>
-
-    <footer><p>&copy; 2026 TipsyRoaming. Exploring the Pine City, one step at a time.</p></footer>
+    
+    <footer>
+        <p>&copy; 2026 TipsyRoaming. Exploring the Pine City, one step at a time. | <a href="privacy.html" style="color: var(--accent-gold); text-decoration: none;">Privacy Policy</a></p>
+    </footer>
 
     <script type="module" src="js/app.js"></script>
 </body>
