@@ -18,9 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const userName = document.getElementById('userName');
     const userAvatar = document.getElementById('userAvatar');
 
-    let currentUser = null; // 記錄當前登入者
+    let currentUser = null;
 
-    // 監聽登入狀態改變
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 綁定登入按鈕
     loginBtn.addEventListener('click', () => {
         signInWithPopup(auth, provider).catch((error) => {
             console.error("Login failed:", error);
@@ -43,40 +41,41 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 綁定登出按鈕
     logoutBtn.addEventListener('click', () => {
-        signOut(auth).then(() => {
-            alert("You have been logged out.");
-        });
+        signOut(auth).then(() => alert("You have been logged out."));
     });
 
-    // 3. 處理照片選擇與預覽 (目前針對 Study 區塊)
-    let selectedFile = null;
-    const fileInput = document.getElementById('file-study');
-    const previewContainer = document.getElementById('preview-study');
+    // 3. 處理照片選擇與預覽 (同時支援 Sightseeing 與 Gourmet)
+    let selectedFiles = {
+        sightseeing: null,
+        gourmet: null
+    };
 
-    if (fileInput) {
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+    ['sightseeing', 'gourmet'].forEach(type => {
+        const fileInput = document.getElementById(`file-${type}`);
+        const previewContainer = document.getElementById(`preview-${type}`);
 
-            // 簡單的檔案大小限制 (限制 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert("File is too large! Please choose an image under 5MB.");
-                fileInput.value = '';
-                return;
-            }
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
 
-            selectedFile = file;
-            
-            // 產生預覽圖
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-            };
-            reader.readAsDataURL(file);
-        });
-    }
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("File is too large! Please choose an image under 5MB.");
+                    fileInput.value = '';
+                    return;
+                }
+
+                selectedFiles[type] = file;
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    });
 
     // 4. 攔截 Publish 按鈕，執行上傳與資料庫寫入
     document.querySelectorAll('.publish-btn').forEach(btn => {
@@ -90,48 +89,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 強制必須登入才能留言
             if (!currentUser) {
                 alert("Please Sign in with Google first to share your experience!");
                 return;
             }
 
-            // 準備要寫入資料庫的包裹
             const postData = {
                 text: textContent,
                 author: currentUser.displayName,
                 uid: currentUser.uid,
                 timestamp: new Date().toISOString(),
-                imageUrl: null // 預設沒有圖片
+                imageUrl: null
             };
 
             btn.disabled = true;
             btn.textContent = "Publishing...";
 
             try {
-                // 如果是 Study 區塊且有選擇照片，先上傳到 Storage
-                if (type === 'study' && selectedFile) {
-                    // 建立一個獨一無二的檔案名稱避免覆蓋
-                    const fileName = `${Date.now()}_${selectedFile.name}`;
+                // 如果是觀光或美食區，且有選擇照片，則執行上傳
+                if ((type === 'sightseeing' || type === 'gourmet') && selectedFiles[type]) {
+                    const file = selectedFiles[type];
+                    const fileName = `${Date.now()}_${file.name}`;
                     const imageRef = storageRef(storage, `reviews/${type}/${fileName}`);
                     
-                    // 執行上傳
-                    const uploadResult = await uploadBytes(imageRef, selectedFile);
-                    // 取得照片的公開下載網址
+                    const uploadResult = await uploadBytes(imageRef, file);
                     const photoUrl = await getDownloadURL(uploadResult.ref);
                     postData.imageUrl = photoUrl;
                 }
 
-                // 將文字與照片網址一起寫入 Database
+                // 寫入 Database
                 await push(ref(database, `reviews/${type}`), postData);
                 
-                // 清空輸入框與預覽
+                // 恢復原狀
                 inputField.value = '';
                 document.getElementById(`counter-${type}`).textContent = '0 / 300';
-                if (type === 'study') {
-                    selectedFile = null;
-                    if (fileInput) fileInput.value = '';
-                    previewContainer.innerHTML = '';
+                
+                if (type === 'sightseeing' || type === 'gourmet') {
+                    selectedFiles[type] = null;
+                    document.getElementById(`file-${type}`).value = '';
+                    document.getElementById(`preview-${type}`).innerHTML = '';
                 }
                 
                 alert("Published successfully!");
@@ -145,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 5. 即時讀取並顯示留言 (包含圖片顯示邏輯)
+    // 5. 即時讀取並顯示留言
     ['study', 'sightseeing', 'gourmet'].forEach(type => {
         const displayArea = document.getElementById(`display-${type}`);
         if (!displayArea) return;
@@ -160,10 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     div.className = 'review-card';
                     div.style.cssText = 'background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid var(--accent-gold);';
                     
-                    // 格式化時間
                     const date = new Date(post.timestamp).toLocaleDateString();
                     
-                    // 組合 HTML，如果有圖片網址就顯示圖片
                     let imageHtml = '';
                     if (post.imageUrl) {
                         imageHtml = `<img src="${post.imageUrl}" alt="Review Image" style="max-width: 100%; max-height: 200px; border-radius: 4px; margin-top: 10px; border: 1px solid #444;">`;

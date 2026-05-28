@@ -130,19 +130,9 @@
             <div class="member-section">
                 <div class="form-group">
                     <textarea id="input-study" class="editor-area lang-placeholder" data-i18n-placeholder="review" maxlength="300"></textarea>
-                    
-                    <div class="media-preview-container" id="preview-study"></div>
-                    
-                    <div class="form-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                        <label class="btn-upload">
-                            <i class="fas fa-camera"></i> Add Photo
-                            <input type="file" id="file-study" accept="image/*" style="display: none;">
-                        </label>
-                        
-                        <div style="display: flex; align-items: center; gap: 15px;">
-                            <div id="counter-study" class="char-counter">0 / 300</div>
-                            <button class="btn-submit publish-btn lang-text" data-type="study" data-i18n-nav="publish">Publish</button>
-                        </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <div id="counter-study" class="char-counter">0 / 300</div>
+                        <button class="btn-submit publish-btn lang-text" data-type="study" data-i18n-nav="publish">Publish</button>
                     </div>
                 </div>
                 <div id="display-study" class="reviews-list"></div>
@@ -157,8 +147,20 @@
                     <div class="member-section">
                         <div class="form-group">
                             <textarea id="input-sightseeing" class="editor-area lang-placeholder" data-i18n-placeholder="sightseeing" maxlength="300"></textarea>
-                            <div id="counter-sightseeing" class="char-counter">0 / 300</div>
-                            <button class="btn-submit publish-btn lang-text" data-type="sightseeing" data-i18n-nav="publish">Publish</button>
+                            
+                            <div class="media-preview-container" id="preview-sightseeing"></div>
+                            
+                            <div class="form-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                                <label class="btn-upload">
+                                    <i class="fas fa-camera"></i> Add Photo
+                                    <input type="file" id="file-sightseeing" accept="image/*" style="display: none;">
+                                </label>
+                                
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div id="counter-sightseeing" class="char-counter">0 / 300</div>
+                                    <button class="btn-submit publish-btn lang-text" data-type="sightseeing" data-i18n-nav="publish">Publish</button>
+                                </div>
+                            </div>
                         </div>
                         <div id="display-sightseeing" class="reviews-list"></div>
                     </div>
@@ -168,8 +170,20 @@
                     <div class="member-section">
                         <div class="form-group">
                             <textarea id="input-gourmet" class="editor-area lang-placeholder" data-i18n-placeholder="gourmet" maxlength="300"></textarea>
-                            <div id="counter-gourmet" class="char-counter">0 / 300</div>
-                            <button class="btn-submit publish-btn lang-text" data-type="gourmet" data-i18n-nav="publish">Publish</button>
+                            
+                            <div class="media-preview-container" id="preview-gourmet"></div>
+                            
+                            <div class="form-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                                <label class="btn-upload">
+                                    <i class="fas fa-camera"></i> Add Photo
+                                    <input type="file" id="file-gourmet" accept="image/*" style="display: none;">
+                                </label>
+                                
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <div id="counter-gourmet" class="char-counter">0 / 300</div>
+                                    <button class="btn-submit publish-btn lang-text" data-type="gourmet" data-i18n-nav="publish">Publish</button>
+                                </div>
+                            </div>
                         </div>
                         <div id="display-gourmet" class="reviews-list"></div>
                     </div>
