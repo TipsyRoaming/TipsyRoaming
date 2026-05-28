@@ -75,7 +75,12 @@
             </ul>
         </nav>
         <div class="auth-buttons">
-            <button class="btn-register lang-text" id="navJoinUsBtn" data-i18n-nav="joinUs">Join Us</button>
+            <div id="userProfile" style="display: none; align-items: center; gap: 10px;">
+                <img id="userAvatar" src="" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%;">
+                <span id="userName" style="color: var(--mist-white); font-weight: bold;"></span>
+                <button class="btn-register" id="navLogoutBtn">Logout</button>
+            </div>
+            <button class="btn-register" id="navLoginBtn"><i class="fab fa-google"></i> Sign in with Google</button>
         </div>
     </header>
 
@@ -125,8 +130,20 @@
             <div class="member-section">
                 <div class="form-group">
                     <textarea id="input-study" class="editor-area lang-placeholder" data-i18n-placeholder="review" maxlength="300"></textarea>
-                    <div id="counter-study" class="char-counter">0 / 300</div>
-                    <button class="btn-submit publish-btn lang-text" data-type="study" data-i18n-nav="publish">Publish</button>
+                    
+                    <div class="media-preview-container" id="preview-study"></div>
+                    
+                    <div class="form-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                        <label class="btn-upload">
+                            <i class="fas fa-camera"></i> Add Photo
+                            <input type="file" id="file-study" accept="image/*" style="display: none;">
+                        </label>
+                        
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div id="counter-study" class="char-counter">0 / 300</div>
+                            <button class="btn-submit publish-btn lang-text" data-type="study" data-i18n-nav="publish">Publish</button>
+                        </div>
+                    </div>
                 </div>
                 <div id="display-study" class="reviews-list"></div>
             </div>
