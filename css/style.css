@@ -107,3 +107,33 @@ footer { text-align: center; padding: 60px 40px; color: #666; font-size: 0.85rem
     .info-dashboard { flex-direction: column; gap: 20px; padding: 20px; width: 100%; }
     .travel-container { flex-direction: column; }
 }
+
+/* 相機上傳按鈕樣式 */
+.btn-upload {
+    cursor: pointer;
+    color: var(--lazy-purple);
+    background: transparent;
+    border: 1px solid var(--lazy-purple);
+    padding: 6px 15px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: 0.3s;
+    display: inline-block;
+}
+.btn-upload:hover {
+    background: var(--lazy-purple);
+    color: #fff;
+}
+/* 照片預覽縮圖區塊 */
+.media-preview-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+.media-preview-container img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #444;
+}

@@ -27,20 +27,16 @@ export function setupUI() {
         alert("Account creation function will be unlocked in the next session!");
     });
 
-    // Base64 混淆聯絡資訊 (防爬蟲)
+    // Base64 混淆聯絡資訊 (防爬蟲) - 已移除電話，僅保留 Email
     document.getElementById('revealContactBtn').addEventListener('click', function() {
         const user = atob('dGlwc3lyb2FtaW5naW50aGV3b3JsZA==');
         const domain = atob('Z21haWwuY29t');
         const fullEmail = `${user}@${domain}`;
-        const fullPhone = atob('Kzg4Ni05ODgtNTcyLTI4OA==');
         
         const container = document.getElementById('contact-container');
         container.innerHTML = `
             <p style="margin-bottom: 10px;">
                 <a href="mailto:${fullEmail}" style="color: var(--accent-gold); text-decoration: none;">Email: ${fullEmail}</a>
-            </p>
-            <p>
-                <a href="tel:${fullPhone.replace(/-/g, '')}" style="color: var(--accent-gold); text-decoration: none;">Tel: ${fullPhone}</a>
             </p>
         `;
     });
