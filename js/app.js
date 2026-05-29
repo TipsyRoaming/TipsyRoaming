@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // ⚠️ 這裡的內容，請您把原本的聯絡方式（Email 或電話）填寫回去！
             contactContainer.innerHTML = `
                 <p style="color: var(--mist-white); font-size: 1.1rem; margin-top: 15px; animation: fadeIn 0.5s;">
-                    <i class="fas fa-envelope"></i> 請在這裡輸入您原本的聯絡 Email 或方式
+                    <i class="fas fa-envelope"></i> tipsyroamingintheworld@gmail.com
                 </p>
             `;
         });
