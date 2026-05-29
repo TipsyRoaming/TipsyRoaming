@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         revealContactBtn.addEventListener('click', () => {
             contactContainer.innerHTML = `
                 <p style="color: var(--mist-white); font-size: 1.1rem; margin-top: 15px; animation: fadeIn 0.5s;">
-                    <i class="fas fa-envelope"></i> info@tipsyroaming.com
+                    <i class="fas fa-envelope"></i> tipsyroamingintheworld@gmail.com
                 </p>
             `;
         });
