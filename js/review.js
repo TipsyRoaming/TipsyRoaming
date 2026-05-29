@@ -1,13 +1,7 @@
 import {
-    database,
-    ref,
-    push,
-    onValue,
-    storage,
-    storageRef,
-    uploadBytes,
-    getDownloadURL,
-    auth
+    database, ref, push, onValue,
+    storage, storageRef, uploadBytes, getDownloadURL,
+    auth, provider, signInWithPopup, onAuthStateChanged, signOut
 } from "./firebase.js";
 
 let selectedFiles = {
@@ -20,6 +14,39 @@ function getUser() {
 }
 
 export function initReview() {
+
+    // ================= Auth Login / Logout UI =================
+    const loginBtn = document.getElementById('navLoginBtn');
+    const logoutBtn = document.getElementById('navLogoutBtn');
+    const userProfile = document.getElementById('userProfile');
+    const userName = document.getElementById('userName');
+    const userAvatar = document.getElementById('userAvatar');
+
+    if (loginBtn && logoutBtn && userProfile) {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loginBtn.style.display = 'none';
+                userProfile.style.display = 'flex';
+                if (userName) userName.textContent = user.displayName;
+                if (userAvatar) userAvatar.src = user.photoURL;
+            } else {
+                loginBtn.style.display = 'inline-block';
+                userProfile.style.display = 'none';
+            }
+        });
+
+        loginBtn.addEventListener('click', () => {
+            signInWithPopup(auth, provider).catch((error) => {
+                console.error("Login failed:", error);
+                alert("Google Sign-In failed. Please ensure Firebase configuration is correct.");
+            });
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            signOut(auth).then(() => alert("You have been logged out."));
+        });
+    }
+
 
     // ================= file upload =================
     ['sightseeing', 'gourmet'].forEach(type => {
@@ -60,6 +87,8 @@ export function initReview() {
             if (!user) return alert("Please login");
 
             btn.disabled = true;
+            const originalText = btn.textContent;
+            btn.textContent = "Publishing...";
 
             try {
                 let imageUrl = null;
@@ -93,11 +122,14 @@ export function initReview() {
                 if (preview) preview.innerHTML = '';
                 if (fileInput) fileInput.value = '';
 
+                alert("Published successfully!");
+
             } catch (err) {
                 console.error(err);
                 alert("Publish failed");
             } finally {
                 btn.disabled = false;
+                btn.textContent = originalText;
             }
         });
     });
@@ -121,11 +153,16 @@ export function initReview() {
                     div.style.padding = "10px";
                     div.style.margin = "10px 0";
                     div.style.background = "rgba(255,255,255,0.05)";
+                    
+                    const date = new Date(post.timestamp).toLocaleDateString();
 
                     div.innerHTML = `
-                        <strong>${post.author}</strong>
-                        <div>${post.text}</div>
-                        ${post.imageUrl ? `<img src="${post.imageUrl}" style="max-width:100%;">` : ''}
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <strong style="color: var(--accent-gold);"><i class="fas fa-user-circle"></i> ${post.author}</strong>
+                            <small style="color: #888;">${date}</small>
+                        </div>
+                        <div style="color: var(--mist-white); line-height: 1.5;">${post.text}</div>
+                        ${post.imageUrl ? `<img src="${post.imageUrl}" style="max-width:100%; border-radius: 4px; margin-top: 10px; border: 1px solid #444;">` : ''}
                     `;
 
                     box.appendChild(div);

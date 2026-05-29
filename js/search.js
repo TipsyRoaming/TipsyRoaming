@@ -9,9 +9,11 @@ export const staticSearchData = [
     { name: "ANJ", type: "School", link: "#study" }
 ];
 
-export function setupSearch(searchInput, searchResults, getDynamicData) {
-
+export function initSearch() {
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
     const form = document.getElementById('ga4SearchForm');
+    
     if (form) {
         form.addEventListener('submit', e => e.preventDefault());
     }
@@ -28,7 +30,7 @@ export function setupSearch(searchInput, searchResults, getDynamicData) {
             return;
         }
 
-        const dynamic = getDynamicData?.() || [];
+        const dynamic = window.__reviews || [];
 
         const staticMatches = staticSearchData.filter(i =>
             i.name.toLowerCase().includes(val)

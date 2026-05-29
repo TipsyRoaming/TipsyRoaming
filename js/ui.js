@@ -1,4 +1,4 @@
-export function setupUI() {
+export function initUI() {
 
     const $ = (id) => document.getElementById(id);
 
