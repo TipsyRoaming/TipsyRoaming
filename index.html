@@ -11,6 +11,7 @@
         frame-src 'self' https://*.firebaseapp.com;
     ">
 
+    <!-- GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HC3B37FCGM"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -19,6 +20,7 @@
       gtag('config', 'G-HC3B37FCGM');
     </script>
 
+    <!-- Microsoft Clarity -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -27,6 +29,7 @@
         })(window, document, "clarity", "script", "wh2ke1h2lp");
     </script>
 
+    <!-- ⭐ A版本必要：review / search state hook -->
     <script>
         window.__reviews = [];
     </script>
@@ -70,7 +73,6 @@
                 <li><a href="#study" class="lang-text" data-i18n-nav="study">Study</a></li>
                 <li><a href="#travel" class="lang-text" data-i18n-nav="travel">Travel</a></li>
                 <li><a href="#contact" class="lang-text" data-i18n-nav="contact">Connect</a></li>
-                <li><a href="#register" class="lang-text" data-i18n-nav="register">Register</a></li>
                 <li>
                     <select class="lang-switch" id="langSelect">
                         <option value="en">English</option>
@@ -194,17 +196,6 @@
                         <div id="display-gourmet" class="reviews-list"></div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <section id="register">
-            <h3 class="lang-text" data-i18n-nav="registerTitle">Register</h3>
-            <div class="member-section">
-                <form id="registerForm">
-                    <div class="form-group"><input type="text" class="form-control" placeholder="Full Name" required></div>
-                    <div class="form-group"><input type="email" class="form-control" placeholder="Email" required></div>
-                    <button type="submit" class="btn-submit lang-text" data-i18n-nav="createAccount">Create Account</button>
-                </form>
             </div>
         </section>
 
