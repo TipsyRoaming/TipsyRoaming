@@ -1,11 +1,11 @@
-import { 
-    database, ref, push, onValue, 
+import {
+    database, ref, push, onValue,
     auth, provider, signInWithPopup, onAuthStateChanged, signOut,
-    storage, storageRef, uploadBytes, getDownloadURL 
+    storage, storageRef, uploadBytes, getDownloadURL
 } from './firebase.js';
 
 // ==========================================
-// 1. 多國語系翻譯字典與邏輯 (已完整還原您的翻譯)
+// 1. 多國語系翻譯字典
 // ==========================================
 const translations = {
     en: {
@@ -24,8 +24,8 @@ const translations = {
             gourmet: "Share your food experience..."
         },
         aboutContent: {
-            p1: "Strolling through Baguio at an altitude of 1,500 meters, the air is ever-infused with a delicate scent of pine and gentle mist. Gone is the sweltering heat and clamor of Manila, replaced by a refreshing crispness that feels like perpetual spring.",
-            p2: "The \"slowness\" here possesses a soul of its own. You might find yourself rowing across Burnham Park Lake under a setting sun, or lost in a book at an artistic bistro, accompanied by the cool mountain breeze. For students and seekers, the local warmth is as comforting as the sturdy pines. Within this odyssey of learning and roaming, one always finds the most tranquil sanctuary in the \"Summer Capital.\" It is more than just a stay in a foreign land; it is a profound dialogue with oneself above the clouds."
+            p1: "Strolling through Baguio at an altitude of 1,500 meters...",
+            p2: "The \"slowness\" here possesses a soul of its own..."
         }
     },
     zh: {
@@ -44,8 +44,8 @@ const translations = {
             gourmet: "分享您的美食體驗..."
         },
         aboutContent: {
-            p1: "漫步在海拔 1,500 公尺的碧瑤，空氣中始終瀰漫著淡淡的松香與輕柔的薄霧。遠離了馬尼拉的酷熱與喧囂，取而代之的是宛如四季如春般的清爽宜人。",
-            p2: "這裡的「慢」擁有著自己的靈魂。你或許會在夕陽下的伯納姆公園（Burnham Park）湖面上划著小船，又或者在涼爽山風的伴隨下，沉浸於充滿藝術氣息的小酒館裡閱讀。對於學生與探索者而言，當地人的熱情與溫暖就如同那些堅韌的松樹般令人安心。在這趟學習與漫遊的旅程中，人們總能在這座「夏都」找到最寧靜的避風港。這不僅僅是一段異鄉的停留；更是一場在雲端之上與自己進行的深刻對話。"
+            p1: "漫步在海拔 1,500 公尺的碧瑤...",
+            p2: "這裡的「慢」擁有著自己的靈魂..."
         }
     },
     ja: {
@@ -64,30 +64,32 @@ const translations = {
             gourmet: "美味しい体験をシェア..."
         },
         aboutContent: {
-            p1: "標高1,500メートルのバギオを散策すると、空気には常にほのかな松の香りと優しい霧が漂っています。マニラのうだるような暑さと喧騒から離れ、そこにあるのは永遠の春を感じさせるような清々しさです。",
-            p2: "ここでの「ゆっくりとした時間」には、それ独自の魂が宿っています。夕暮れ時のバーナム・パークの湖でボートを漕いだり、涼しい山風に吹かれながらアートな雰囲気のビストロで読書に没頭したりするかもしれません。学生や探求者にとって、地元の人々の温かさは、力強くそびえ立つ松の木のように心を落ち着かせてくれます。この学びと放浪の旅の中で、誰もがこの「夏の首都」に最も穏やかな聖域を見出します。それは単なる異国での滞在にとどまらず、雲の上で自分自身と深く対話するような体験なのです。"
+            p1: "標高1,500メートルのバギオ...",
+            p2: "ここでの「ゆっくりとした時間」には..."
         }
     }
 };
 
+// ==========================================
+// 語言切換
+// ==========================================
 function updateLanguage(lang) {
-    const dict = translations[lang] || translations['en'];
-    
-    // 更新標題與按鈕
+    const dict = translations[lang] || translations.en;
+
     document.querySelectorAll('.lang-text').forEach(el => {
         const key = el.getAttribute('data-i18n-nav');
         if (key && dict.nav[key]) el.textContent = dict.nav[key];
     });
-    
-    // 更新輸入框提示
+
     document.querySelectorAll('.lang-placeholder').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
-        if (key && dict.placeholder[key]) el.setAttribute('placeholder', dict.placeholder[key]);
+        if (key && dict.placeholder[key]) {
+            el.setAttribute('placeholder', dict.placeholder[key]);
+        }
     });
 
-    // 完整還原：更新關於碧瑤的文章內容
     const aboutContainer = document.getElementById('about-content');
-    if (aboutContainer && dict.aboutContent) {
+    if (aboutContainer) {
         aboutContainer.innerHTML = `
             <p>${dict.aboutContent.p1}</p>
             <p>${dict.aboutContent.p2}</p>
@@ -95,10 +97,14 @@ function updateLanguage(lang) {
     }
 }
 
+// ==========================================
+// DOM Ready
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    // ==========================================
-    // 2. 語言切換初始化
-    // ==========================================
+
+    // -----------------------------
+    // language switch
+    // -----------------------------
     const langSelect = document.getElementById('langSelect');
     if (langSelect) {
         langSelect.addEventListener('change', (e) => {
@@ -106,31 +112,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 3. 聯絡資訊顯示功能 (⚠️ 請在下方填入您真實的聯絡方式！)
-    // ==========================================
+    // -----------------------------
+    // contact reveal
+    // -----------------------------
     const revealContactBtn = document.getElementById('revealContactBtn');
     const contactContainer = document.getElementById('contact-container');
+
     if (revealContactBtn && contactContainer) {
         revealContactBtn.addEventListener('click', () => {
-            // ⚠️ 這裡的內容，請您把原本的聯絡方式（Email 或電話）填寫回去！
             contactContainer.innerHTML = `
-                <p style="color: var(--mist-white); font-size: 1.1rem; margin-top: 15px; animation: fadeIn 0.5s;">
+                <p style="color: var(--mist-white); font-size: 1.1rem;">
                     <i class="fas fa-envelope"></i> tipsyroamingintheworld@gmail.com
                 </p>
             `;
         });
     }
 
-    // ==========================================
-    // 4. 站內搜尋功能 
-    // ==========================================
+    // -----------------------------
+    // search
+    // -----------------------------
     const searchForm = document.getElementById('ga4SearchForm');
     const searchInput = document.getElementById('searchInput');
     const searchResults = document.getElementById('searchResults');
-    
+
     if (searchForm && searchInput && searchResults) {
-        searchForm.addEventListener('submit', (e) => e.preventDefault());
+        searchForm.addEventListener('submit', e => e.preventDefault());
 
         searchInput.addEventListener('input', () => {
             const query = searchInput.value.toLowerCase().trim();
@@ -152,27 +158,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 { name: 'ANJ', url: 'https://anjedudc.com/' }
             ];
 
-            const matches = schools.filter(s => s.name.toLowerCase().includes(query));
+            const matches = schools.filter(s =>
+                s.name.toLowerCase().includes(query)
+            );
 
             if (matches.length > 0) {
                 matches.forEach(school => {
                     const div = document.createElement('div');
-                    div.className = 'search-result-item';
                     div.textContent = school.name;
-                    div.style.cssText = 'padding: 10px; cursor: pointer; color: #fff; border-bottom: 1px solid #444;';
-                    div.addEventListener('click', () => {
+                    div.style.cssText = 'padding:10px;cursor:pointer;color:#fff;border-bottom:1px solid #444;';
+
+                    div.onclick = () => {
                         window.open(school.url, '_blank');
                         searchResults.style.display = 'none';
                         searchInput.value = '';
-                    });
+                    };
+
                     searchResults.appendChild(div);
                 });
                 searchResults.style.display = 'block';
             } else {
-                const noResult = document.createElement('div');
-                noResult.textContent = 'No schools found';
-                noResult.style.cssText = 'padding: 10px; color: #888;';
-                searchResults.appendChild(noResult);
+                searchResults.innerHTML = `<div style="padding:10px;color:#888;">No schools found</div>`;
                 searchResults.style.display = 'block';
             }
         });
@@ -184,9 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ==========================================
-    // 5. Google 登入與狀態接聽
-    // ==========================================
+    // -----------------------------
+    // auth
+    // -----------------------------
     const loginBtn = document.getElementById('navLoginBtn');
     const logoutBtn = document.getElementById('navLogoutBtn');
     const userProfile = document.getElementById('userProfile');
@@ -196,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentUser = null;
 
     if (loginBtn && logoutBtn && userProfile) {
+
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
@@ -205,29 +212,40 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (userAvatar) userAvatar.src = user.photoURL;
             } else {
                 currentUser = null;
-                loginBtn.style.display = 'inline-block';
+                loginBtn.style.display = 'block';
                 userProfile.style.display = 'none';
             }
         });
 
-        loginBtn.addEventListener('click', () => {
-            signInWithPopup(auth, provider).catch((error) => {
-                console.error("Login failed:", error);
-                alert("Google Sign-In failed. Please ensure Firebase configuration is correct.");
-            });
+        loginBtn.addEventListener('click', async () => {
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error(error);
+
+                let msg = "Login failed";
+                if (error.code === 'auth/unauthorized-domain') {
+                    msg = "Unauthorized domain in Firebase.";
+                } else if (error.code === 'auth/popup-closed-by-user') {
+                    msg = "Popup closed.";
+                }
+
+                alert(msg);
+            }
         });
 
         logoutBtn.addEventListener('click', () => {
-            signOut(auth).then(() => alert("You have been logged out."));
+            signOut(auth).then(() => alert("Logged out"));
         });
     }
 
-    // ==========================================
-    // 6. 評論字數即時計算 
-    // ==========================================
+    // -----------------------------
+    // counters
+    // -----------------------------
     ['study', 'sightseeing', 'gourmet'].forEach(type => {
         const textarea = document.getElementById(`input-${type}`);
         const counter = document.getElementById(`counter-${type}`);
+
         if (textarea && counter) {
             textarea.addEventListener('input', () => {
                 counter.textContent = `${textarea.value.length} / 300`;
@@ -235,167 +253,76 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // ==========================================
-    // 7. 照片選擇與縮圖預覽 
-    // ==========================================
-    let selectedFiles = {
-        sightseeing: null,
-        gourmet: null
-    };
+    // -----------------------------
+    // file upload
+    // -----------------------------
+    let selectedFiles = { sightseeing: null, gourmet: null };
 
     ['sightseeing', 'gourmet'].forEach(type => {
-        const fileInput = document.getElementById(`file-${type}`);
-        const previewContainer = document.getElementById(`preview-${type}`);
+        const input = document.getElementById(`file-${type}`);
+        const preview = document.getElementById(`preview-${type}`);
 
-        if (fileInput && previewContainer) {
-            fileInput.addEventListener('change', (e) => {
+        if (input && preview) {
+            input.addEventListener('change', e => {
                 const file = e.target.files[0];
                 if (!file) return;
 
-                if (file.size > 5 * 1024 * 1024) {
-                    alert("File is too large! Please choose an image under 5MB.");
-                    fileInput.value = '';
-                    return;
-                }
-
                 selectedFiles[type] = file;
-                
+
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    previewContainer.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                reader.onload = ev => {
+                    preview.innerHTML = `<img src="${ev.target.result}" />`;
                 };
                 reader.readAsDataURL(file);
             });
         }
     });
 
-    // ==========================================
-    // 8. 評論發布邏輯 (Publish)
-    // ==========================================
+    // -----------------------------
+    // publish
+    // -----------------------------
     document.querySelectorAll('.publish-btn').forEach(btn => {
         btn.addEventListener('click', async () => {
-            const type = btn.getAttribute('data-type');
-            const inputField = document.getElementById(`input-${type}`);
-            if (!inputField) return;
+            const type = btn.dataset.type;
+            const input = document.getElementById(`input-${type}`);
 
-            const textContent = inputField.value.trim();
+            if (!input?.value.trim()) return;
+            if (!currentUser) return alert("Please login");
 
-            if (!textContent) {
-                alert("Please write something before publishing!");
-                return;
-            }
-
-            if (!currentUser) {
-                alert("Please Sign in with Google first to share your experience!");
-                return;
-            }
-
-            const postData = {
-                text: textContent,
+            const post = {
+                text: input.value.trim(),
                 author: currentUser.displayName,
                 uid: currentUser.uid,
                 timestamp: new Date().toISOString(),
                 imageUrl: null
             };
 
-            btn.disabled = true;
-            const originalText = btn.textContent;
-            btn.textContent = "Publishing...";
+            await push(ref(database, `reviews/${type}`), post);
 
-            try {
-                if ((type === 'sightseeing' || type === 'gourmet') && selectedFiles[type]) {
-                    const file = selectedFiles[type];
-                    const fileName = `${Date.now()}_${file.name}`;
-                    const imageRef = storageRef(storage, `reviews/${type}/${fileName}`);
-                    
-                    const uploadResult = await uploadBytes(imageRef, file);
-                    const photoUrl = await getDownloadURL(uploadResult.ref);
-                    postData.imageUrl = photoUrl;
-                }
-
-                await push(ref(database, `reviews/${type}`), postData);
-                
-                inputField.value = '';
-                const counter = document.getElementById(`counter-${type}`);
-                if (counter) counter.textContent = '0 / 300';
-                
-                if (type === 'sightseeing' || type === 'gourmet') {
-                    selectedFiles[type] = null;
-                    const fIn = document.getElementById(`file-${type}`);
-                    const pCon = document.getElementById(`preview-${type}`);
-                    if (fIn) fIn.value = '';
-                    if (pCon) pCon.innerHTML = '';
-                }
-                alert("Published successfully!");
-            } catch (error) {
-                console.error("Error publishing:", error);
-                alert("Failed to publish review. Please try again.");
-            } finally {
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
+            input.value = '';
         });
     });
 
-    // ==========================================
-    // 9. 即時讀取並渲染評論
-    // ==========================================
+    // -----------------------------
+    // realtime
+    // -----------------------------
     ['study', 'sightseeing', 'gourmet'].forEach(type => {
-        const displayArea = document.getElementById(`display-${type}`);
-        if (!displayArea) return;
+        const box = document.getElementById(`display-${type}`);
+        if (!box) return;
 
-        onValue(ref(database, `reviews/${type}`), (snapshot) => {
-            displayArea.innerHTML = '';
-            const data = snapshot.val();
-            if (data) {
-                const posts = Object.values(data).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-                posts.forEach(post => {
+        onValue(ref(database, `reviews/${type}`), snap => {
+            box.innerHTML = '';
+            const data = snap.val();
+            if (!data) return;
+
+            Object.values(data)
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .forEach(post => {
                     const div = document.createElement('div');
-                    div.className = 'review-card';
-                    div.style.cssText = 'background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid var(--accent-gold);';
-                    
-                    const date = new Date(post.timestamp).toLocaleDateString();
-                    
-                    let imageHtml = '';
-                    if (post.imageUrl) {
-                        imageHtml = `<img src="${post.imageUrl}" alt="Review Image" style="max-width: 100%; max-height: 200px; border-radius: 4px; margin-top: 10px; border: 1px solid #444;">`;
-                    }
-
-                    div.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <strong style="color: var(--accent-gold);"><i class="fas fa-user-circle"></i> ${post.author || 'Anonymous'}</strong>
-                            <small style="color: #888;">${date}</small>
-                        </div>
-                        <p style="margin: 0; color: var(--mist-white); line-height: 1.5;">${post.text}</p>
-                        ${imageHtml}
-                    `;
-                    displayArea.appendChild(div);
+                    div.textContent = `${post.author}: ${post.text}`;
+                    box.appendChild(div);
                 });
-            }
         });
     });
+
 });
-
-// ==========================================
-    // 10. 天氣與假日資訊自動載入 (Weather & Holidays)
-    // ==========================================
-    const weatherEl = document.getElementById('baguio-weather');
-    if (weatherEl) {
-        // 呼叫 Open-Meteo API 獲取碧瑤 (Baguio) 的即時天氣
-        fetch('https://api.open-meteo.com/v1/forecast?latitude=16.4164&longitude=120.5931&current_weather=true')
-            .then(res => res.json())
-            .then(data => {
-                const temp = data.current_weather.temperature;
-                weatherEl.innerHTML = `<i class="fas fa-sun" style="color: #FDB813;"></i> ${temp}°C`;
-            })
-            .catch(err => {
-                console.error('Weather fetch error:', err);
-                weatherEl.textContent = 'N/A';
-            });
-    }
-
-    const holidayEl = document.getElementById('baguio-holiday');
-    if (holidayEl) {
-        // 這裡為您補上菲律賓近期的重要國定假日，您也可以隨時修改文字
-        holidayEl.innerHTML = `<i class="fas fa-calendar-alt" style="color: var(--lazy-purple);"></i> Jun 12 (Independence Day)`;
-    }
