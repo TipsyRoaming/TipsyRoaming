@@ -15,7 +15,7 @@ function getUser() {
 
 export function initReview() {
 
-    // ================= Auth Login / Logout UI =================
+    // ================= Auth =================
     const loginBtn = document.getElementById('navLoginBtn');
     const logoutBtn = document.getElementById('navLogoutBtn');
     const userProfile = document.getElementById('userProfile');
@@ -36,14 +36,11 @@ export function initReview() {
         });
 
         loginBtn.addEventListener('click', () => {
-            signInWithPopup(auth, provider).catch((error) => {
-                console.error("Login failed:", error);
-                alert("Google Sign-In failed. Please ensure Firebase configuration is correct.");
-            });
+            signInWithPopup(auth, provider).catch(err => console.error(err));
         });
 
         logoutBtn.addEventListener('click', () => {
-            signOut(auth).then(() => alert("You have been logged out."));
+            signOut(auth);
         });
     }
 
@@ -68,7 +65,7 @@ export function initReview() {
 
             const reader = new FileReader();
             reader.onload = ev => {
-                preview.innerHTML = `<img src="${ev.target.result}" alt="Preview">`;
+                preview.innerHTML = `<img src="${ev.target.result}" style="max-width:100%;" />`;
             };
             reader.readAsDataURL(file);
         });
@@ -81,20 +78,12 @@ export function initReview() {
             const type = btn.dataset.type;
             const input = document.getElementById(`input-${type}`);
 
-            if (!input || !input.value.trim()) {
-                alert("Please write something before publishing!");
-                return;
-            }
+            if (!input || !input.value.trim()) return;
 
             const user = getUser();
-            if (!user) {
-                alert("Please Sign in with Google first to share your experience!");
-                return;
-            }
+            if (!user) return alert("Please login first");
 
             btn.disabled = true;
-            const originalText = btn.textContent;
-            btn.textContent = "Publishing...";
 
             try {
                 let imageUrl = null;
@@ -128,19 +117,16 @@ export function initReview() {
                 if (preview) preview.innerHTML = '';
                 if (fileInput) fileInput.value = '';
 
-                alert("Published successfully!");
-
             } catch (err) {
                 console.error(err);
-                alert("Publish failed. Check console for details.");
+                alert("Publish failed");
             } finally {
                 btn.disabled = false;
-                btn.textContent = originalText;
             }
         });
     });
 
-    // ================= realtime & search state sync =================
+    // ================= realtime & search hook =================
     ['study', 'sightseeing', 'gourmet'].forEach(type => {
         const box = document.getElementById(`display-${type}`);
         if (!box) return;
@@ -148,7 +134,7 @@ export function initReview() {
         onValue(ref(database, `reviews/${type}`), snap => {
             box.innerHTML = '';
             
-            // 每次載入時，先清空舊的搜尋緩存陣列中屬於這一個類別的資料
+            // 清除陣列中對應區塊的舊資料，準備塞入最新資料
             window.__reviews = window.__reviews.filter(item => item.category !== type);
 
             const data = snap.val();
@@ -158,33 +144,30 @@ export function initReview() {
                 .sort((a, b) => b.timestamp - a.timestamp)
                 .forEach(post => {
                     
-                    // 1. 除錯修復：把即時留言推送到 window.__reviews，讓搜尋框找得到！
+                    // 同步到搜尋系統
                     window.__reviews.push({
                         content: post.text,
                         category: type,
                         link: `#${type}`
                     });
 
-                    // 2. 視覺美觀：還原帶有側邊金色線條與正確間距的卡片樣式
+                    // 完全還原您的簡潔卡片樣式
                     const div = document.createElement('div');
-                    div.className = 'review-card';
-                    div.style.cssText = 'background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid var(--accent-gold);';
+                    div.style.padding = "10px";
+                    div.style.margin = "10px 0";
+                    div.style.background = "rgba(255,255,255,0.05)";
                     
-                    const date = new Date(post.timestamp).toLocaleDateString();
-                    
-                    let imageHtml = '';
-                    if (post.imageUrl) {
-                        imageHtml = `<img src="${post.imageUrl}" alt="Review Image" style="max-width: 100%; max-height: 200px; border-radius: 4px; margin-top: 10px; border: 1px solid #444;">`;
-                    }
+                    const dateStr = new Date(post.timestamp).toLocaleDateString();
 
                     div.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <strong style="color: var(--accent-gold);"><i class="fas fa-user-circle"></i> ${post.author}</strong>
-                            <small style="color: #888;">${date}</small>
+                        <div style="display: flex; justify-content: space-between;">
+                            <strong>${post.author}</strong>
+                            <small style="color: #888;">${dateStr}</small>
                         </div>
-                        <p style="margin: 0; color: var(--mist-white); line-height: 1.5;">${post.text}</p>
-                        ${imageHtml}
+                        <div style="margin-top: 5px;">${post.text}</div>
+                        ${post.imageUrl ? `<img src="${post.imageUrl}" style="max-width:100%; margin-top: 10px;">` : ''}
                     `;
+
                     box.appendChild(div);
                 });
         });
