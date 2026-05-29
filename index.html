@@ -10,7 +10,8 @@
         connect-src 'self' ws://127.0.0.1:5500 ws://localhost:5500 https://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com https://*.firebasestorage.app https://api.open-meteo.com https://www.google-analytics.com https://region1.google-analytics.com wss://*.firebaseio.com https://www.gstatic.com https://*.clarity.ms https://apis.google.com https://accounts.google.com;
         frame-src 'self' https://*.firebaseapp.com;
     ">
-    
+
+    <!-- GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-HC3B37FCGM"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -18,6 +19,8 @@
       gtag('js', new Date());
       gtag('config', 'G-HC3B37FCGM');
     </script>
+
+    <!-- Microsoft Clarity -->
     <script type="text/javascript">
         (function(c,l,a,r,i,t,y){
             c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -26,195 +29,163 @@
         })(window, document, "clarity", "script", "wh2ke1h2lp");
     </script>
 
+    <!-- ⭐ A版本必要：review / search state hook -->
+    <script>
+        window.__reviews = [];
+    </script>
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Study English in Baguio | Travel Guide & ESL Schools | TipsyRoaming</title>
-    
+
     <meta name="description" content="Travel guide for Baguio City: ESL schools, study abroad experiences, tourist attractions, food reviews and local tips. Explore the Summer Capital.">
     <meta name="keywords" content="Baguio Travel, Study English in Philippines, Baguio ESL Schools, Summer Capital Philippines, TipsyRoaming">
     <meta name="robots" content="index, follow">
     <meta name="author" content="TipsyRoaming">
-    
+
     <link rel="icon" type="image/png" href="img/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-    <div id="backToTop" title="Back to Top"><i class="fas fa-chevron-up"></i></div>
+<div id="backToTop" title="Back to Top"><i class="fas fa-chevron-up"></i></div>
 
-    <header>
-        <a href="index.html" class="text-logo">
-            <span class="logo-tipsy">Tipsy</span><span class="logo-roaming">Roaming</span>
-        </a>
-        
-        <div class="ga4-search-container">
-            <form action="" method="GET" id="ga4SearchForm">
-                <input type="text" name="q" id="searchInput" class="search-input" placeholder="Search Reviews & Schools..." autocomplete="off">
-                <button type="submit" class="search-btn" aria-label="Search"><i class="fas fa-search"></i></button>
-            </form>
-            <div id="searchResults" class="search-results-dropdown"></div>
+<header>
+    <a href="index.html" class="text-logo">
+        <span class="logo-tipsy">Tipsy</span><span class="logo-roaming">Roaming</span>
+    </a>
+
+    <div class="ga4-search-container">
+        <form id="ga4SearchForm">
+            <input type="text" id="searchInput" class="search-input"
+                   placeholder="Search Reviews & Schools..." autocomplete="off">
+            <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+        </form>
+        <div id="searchResults" class="search-results-dropdown"></div>
+    </div>
+
+    <nav>
+        <ul>
+            <li><a href="#about" class="lang-text" data-i18n-nav="about">About</a></li>
+            <li><a href="#study" class="lang-text" data-i18n-nav="study">Study</a></li>
+            <li><a href="#travel" class="lang-text" data-i18n-nav="travel">Travel</a></li>
+            <li><a href="#contact" class="lang-text" data-i18n-nav="contact">Connect</a></li>
+            <li><a href="#register" class="lang-text" data-i18n-nav="register">Register</a></li>
+
+            <li>
+                <select id="langSelect">
+                    <option value="en">English</option>
+                    <option value="zh">繁體中文</option>
+                    <option value="ja">日本語</option>
+                </select>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="auth-buttons">
+        <div id="userProfile" style="display:none; align-items:center; gap:10px;">
+            <img id="userAvatar" style="width:32px;height:32px;border-radius:50%;">
+            <span id="userName"></span>
+            <button id="navLogoutBtn">Logout</button>
+        </div>
+        <button id="navLoginBtn"><i class="fab fa-google"></i> Sign in with Google</button>
+    </div>
+</header>
+
+<main>
+
+<section id="hero">
+    <div class="poem-text">
+        <span>Truly</span><span> Inspiring</span><span> Places</span><span> Spark</span><span> Your</span>
+    </div>
+
+    <div class="info-dashboard">
+        <div class="widget-item">
+            <span data-i18n-nav="weather" class="lang-text">Weather</span>
+            <div id="baguio-weather">Loading...</div>
         </div>
 
-        <nav>
-            <ul>
-                <li><a href="#about" class="lang-text" data-i18n-nav="about">About</a></li>
-                <li><a href="#study" class="lang-text" data-i18n-nav="study">Study</a></li>
-                <li><a href="#travel" class="lang-text" data-i18n-nav="travel">Travel</a></li>
-                <li><a href="#contact" class="lang-text" data-i18n-nav="contact">Connect</a></li>
-                <li><a href="#register" class="lang-text" data-i18n-nav="register">Register</a></li>
-                <li>
-                    <select class="lang-switch" id="langSelect">
-                        <option value="en">English</option>
-                        <option value="zh">繁體中文</option>
-                        <option value="ja">日本語</option>
-                    </select>
-                </li>
-            </ul>
-        </nav>
-        <div class="auth-buttons">
-            <div id="userProfile" style="display: none; align-items: center; gap: 10px;">
-                <img id="userAvatar" src="" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%;">
-                <span id="userName" style="color: var(--mist-white); font-weight: bold;"></span>
-                <button class="btn-register" id="navLogoutBtn">Logout</button>
-            </div>
-            <button class="btn-register" id="navLoginBtn"><i class="fab fa-google"></i> Sign in with Google</button>
+        <div class="widget-item">
+            <span data-i18n-nav="population" class="lang-text">Population</span>
+            <div id="baguio-pop">366,358 (Est.)</div>
         </div>
-    </header>
 
-    <main>
-        <section id="hero">
-            <div class="poem-text">
-                <span>Truly</span> <span>Inspiring</span> <span>Places</span> <span>Spark</span> <span>Your</span> <span>Roaming</span> <span>Odyssey,</span> 
-                <br>
-                <span>Awakening</span> <span>Magic</span> <span>In</span> <span>Nature's</span> <span>Grandeur.</span>
-            </div>
-            <div class="info-dashboard">
-                <div class="widget-item">
-                    <span class="widget-label lang-text" data-i18n-nav="weather">Weather</span>
-                    <div class="widget-value" id="baguio-weather">Loading...</div>
-                </div>
-                <div class="widget-item">
-                    <span class="widget-label lang-text" data-i18n-nav="population">Population</span>
-                    <div class="widget-value" id="baguio-pop">366,358 (Est.)</div>
-                </div>
-                <div class="widget-item">
-                    <span class="widget-label lang-text" data-i18n-nav="holidays">Holidays</span>
-                    <div class="widget-value" id="baguio-holiday">Updating...</div>
-                </div>
-            </div>
-        </section>
+        <div class="widget-item">
+            <span data-i18n-nav="holidays" class="lang-text">Holidays</span>
+            <div id="baguio-holiday">Updating...</div>
+        </div>
+    </div>
+</section>
 
-        <section id="about">
-            <h3 class="lang-text" data-i18n-nav="whyVisit">Why Visit Baguio?</h3>
-            <div class="about-text" id="about-content">
-                <p>Strolling through Baguio at an altitude of 1,500 meters, the air is ever-infused with a delicate scent of pine and gentle mist. Gone is the sweltering heat and clamor of Manila, replaced by a refreshing crispness that feels like perpetual spring.</p>
-                <p>The "slowness" here possesses a soul of its own. You might find yourself rowing across Burnham Park Lake under a setting sun, or lost in a book at an artistic bistro, accompanied by the cool mountain breeze. For students and seekers, the local warmth is as comforting as the sturdy pines. Within this odyssey of learning and roaming, one always finds the most tranquil sanctuary in the "Summer Capital." It is more than just a stay in a foreign land; it is a profound dialogue with oneself above the clouds.</p>
-            </div>
-        </section>
+<section id="about">
+    <h3 class="lang-text" data-i18n-nav="whyVisit">Why Visit Baguio?</h3>
+    <div id="about-content">
+        <p>Strolling through Baguio...</p>
+        <p>The "slowness" here...</p>
+    </div>
+</section>
 
-        <section id="study">
-            <h3 class="lang-text" data-i18n-nav="studyTitle">Study English in Baguio</h3>
-            <div class="school-grid">
-                <a href="https://walesph.com/" target="_blank" rel="noopener noreferrer" class="school-link track-hover" data-name="WALES" data-category="School">WALES</a>
-                <a href="https://beciedu.com/" target="_blank" rel="noopener noreferrer" class="school-link track-hover" data-name="BECI" data-category="School">BECI</a>
-                <a href="https://pinesacademy.com/" target="_blank" rel="noopener noreferrer" class="school-link track-hover" data-name="PINES" data-category="School">PINES</a>
-                <a href="https://baguio-jic.com/" target="_blank" rel="noopener noreferrer" class="school-link track-hover" data-name="JIC" data-category="School">JIC</a>
-                <a href="https://mymonol.com/" target="_blank" rel="noopener noreferrer" class="school-link track-hover" data-name="MONOL" data-category="School">MONOL</a>
-                <a href="https://helpenglish.org/" target="_blank" rel="noopener noreferrer" class="school-link track-hover" data-name="HELP" data-category="School">HELP</a>
-                <a href="https://cnsphil.com/" target="_blank" rel="noopener noreferrer" class="school-link track-hover" data-name="CNS" data-category="School">CNS</a>
-                <a href="https://anjedudc.com/" target="_blank" rel="noopener noreferrer" class="school-link track-hover" data-name="ANJ" data-category="School">ANJ</a>
-            </div>
-            <div class="member-section">
-                <div class="form-group">
-                    <textarea id="input-study" class="editor-area lang-placeholder" data-i18n-placeholder="review" maxlength="300"></textarea>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                        <div id="counter-study" class="char-counter">0 / 300</div>
-                        <button class="btn-submit publish-btn lang-text" data-type="study" data-i18n-nav="publish">Publish</button>
-                    </div>
-                </div>
-                <div id="display-study" class="reviews-list"></div>
-            </div>
-        </section>
+<section id="study">
+    <h3 class="lang-text" data-i18n-nav="studyTitle">Study English in Baguio</h3>
 
-        <section id="travel">
-            <h3 class="lang-text" data-i18n-nav="travelTitle">Travel in Baguio</h3>
-            <div class="travel-container">
-                <div class="travel-column">
-                    <h4 class="lang-text" data-i18n-nav="sightseeing">Sightseeing</h4>
-                    <div class="member-section">
-                        <div class="form-group">
-                            <textarea id="input-sightseeing" class="editor-area lang-placeholder" data-i18n-placeholder="sightseeing" maxlength="300"></textarea>
-                            
-                            <div class="media-preview-container" id="preview-sightseeing"></div>
-                            
-                            <div class="form-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                                <label class="btn-upload">
-                                    <i class="fas fa-camera"></i> Add Photo
-                                    <input type="file" id="file-sightseeing" accept="image/*" style="display: none;">
-                                </label>
-                                
-                                <div style="display: flex; align-items: center; gap: 15px;">
-                                    <div id="counter-sightseeing" class="char-counter">0 / 300</div>
-                                    <button class="btn-submit publish-btn lang-text" data-type="sightseeing" data-i18n-nav="publish">Publish</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="display-sightseeing" class="reviews-list"></div>
-                    </div>
-                </div>
-                <div class="travel-column">
-                    <h4 class="lang-text" data-i18n-nav="gourmet">Gourmet</h4>
-                    <div class="member-section">
-                        <div class="form-group">
-                            <textarea id="input-gourmet" class="editor-area lang-placeholder" data-i18n-placeholder="gourmet" maxlength="300"></textarea>
-                            
-                            <div class="media-preview-container" id="preview-gourmet"></div>
-                            
-                            <div class="form-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                                <label class="btn-upload">
-                                    <i class="fas fa-camera"></i> Add Photo
-                                    <input type="file" id="file-gourmet" accept="image/*" style="display: none;">
-                                </label>
-                                
-                                <div style="display: flex; align-items: center; gap: 15px;">
-                                    <div id="counter-gourmet" class="char-counter">0 / 300</div>
-                                    <button class="btn-submit publish-btn lang-text" data-type="gourmet" data-i18n-nav="publish">Publish</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="display-gourmet" class="reviews-list"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    <div class="school-grid">
+        <a href="https://walesph.com/" class="track-hover" data-name="WALES">WALES</a>
+        <a href="https://beciedu.com/" class="track-hover" data-name="BECI">BECI</a>
+        <a href="https://pinesacademy.com/" class="track-hover" data-name="PINES">PINES</a>
+        <a href="https://baguio-jic.com/" class="track-hover" data-name="JIC">JIC</a>
+        <a href="https://mymonol.com/" class="track-hover" data-name="MONOL">MONOL</a>
+        <a href="https://helpenglish.org/" class="track-hover" data-name="HELP">HELP</a>
+        <a href="https://cnsphil.com/" class="track-hover" data-name="CNS">CNS</a>
+        <a href="https://anjedudc.com/" class="track-hover" data-name="ANJ">ANJ</a>
+    </div>
 
-        <section id="register">
-            <h3 class="lang-text" data-i18n-nav="registerTitle">Register</h3>
-            <div class="member-section">
-                <form id="registerForm">
-                    <div class="form-group"><input type="text" class="form-control" placeholder="Full Name" required></div>
-                    <div class="form-group"><input type="email" class="form-control" placeholder="Email" required></div>
-                    <button type="submit" class="btn-submit lang-text" data-i18n-nav="createAccount">Create Account</button>
-                </form>
-            </div>
-        </section>
+    <textarea id="input-study" maxlength="300"></textarea>
+    <div id="counter-study">0 / 300</div>
+    <button class="publish-btn" data-type="study">Publish</button>
 
-        <section id="contact">
-             <h3 class="lang-text" data-i18n-nav="contactTitle">Connect With Us</h3>
-             <div id="contact-container">
-                <button id="revealContactBtn" class="btn-reveal lang-text" data-i18n-nav="revealContact">Reveal Contact Info</button>
-             </div>
-        </section>
-    </main>
-    
-    <footer>
-        <p>&copy; 2026 TipsyRoaming. Exploring the Pine City, one step at a time. | <a href="privacy.html" style="color: var(--accent-gold); text-decoration: none;">Privacy Policy</a></p>
-    </footer>
+    <div id="display-study"></div>
+</section>
 
-    <script type="module" src="js/app.js"></script>
+<section id="travel">
+    <h3 class="lang-text" data-i18n-nav="travelTitle">Travel</h3>
+
+    <textarea id="input-sightseeing"></textarea>
+    <input type="file" id="file-sightseeing">
+    <div id="preview-sightseeing"></div>
+    <button class="publish-btn" data-type="sightseeing">Publish</button>
+    <div id="display-sightseeing"></div>
+
+    <textarea id="input-gourmet"></textarea>
+    <input type="file" id="file-gourmet">
+    <div id="preview-gourmet"></div>
+    <button class="publish-btn" data-type="gourmet">Publish</button>
+    <div id="display-gourmet"></div>
+</section>
+
+<section id="register">
+    <form id="registerForm">
+        <input type="text" placeholder="Full Name">
+        <input type="email" placeholder="Email">
+        <button type="submit">Create Account</button>
+    </form>
+</section>
+
+<section id="contact">
+    <button id="revealContactBtn">Reveal Contact Info</button>
+    <div id="contact-container"></div>
+</section>
+
+</main>
+
+<footer>
+    <p>© 2026 TipsyRoaming</p>
+</footer>
+
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
