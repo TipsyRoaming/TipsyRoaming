@@ -47,7 +47,6 @@ export function initReview() {
         });
     }
 
-
     // ================= file upload =================
     ['sightseeing', 'gourmet'].forEach(type => {
         const input = document.getElementById(`file-${type}`);
@@ -61,6 +60,7 @@ export function initReview() {
 
             if (file.size > 5 * 1024 * 1024) {
                 alert("Image too large (max 5MB)");
+                input.value = '';
                 return;
             }
 
@@ -68,7 +68,7 @@ export function initReview() {
 
             const reader = new FileReader();
             reader.onload = ev => {
-                preview.innerHTML = `<img src="${ev.target.result}" style="max-width:100%;" />`;
+                preview.innerHTML = `<img src="${ev.target.result}" alt="Preview">`;
             };
             reader.readAsDataURL(file);
         });
@@ -81,10 +81,16 @@ export function initReview() {
             const type = btn.dataset.type;
             const input = document.getElementById(`input-${type}`);
 
-            if (!input || !input.value.trim()) return;
+            if (!input || !input.value.trim()) {
+                alert("Please write something before publishing!");
+                return;
+            }
 
             const user = getUser();
-            if (!user) return alert("Please login");
+            if (!user) {
+                alert("Please Sign in with Google first to share your experience!");
+                return;
+            }
 
             btn.disabled = true;
             const originalText = btn.textContent;
@@ -126,7 +132,7 @@ export function initReview() {
 
             } catch (err) {
                 console.error(err);
-                alert("Publish failed");
+                alert("Publish failed. Check console for details.");
             } finally {
                 btn.disabled = false;
                 btn.textContent = originalText;
@@ -134,13 +140,16 @@ export function initReview() {
         });
     });
 
-    // ================= realtime =================
+    // ================= realtime & search state sync =================
     ['study', 'sightseeing', 'gourmet'].forEach(type => {
         const box = document.getElementById(`display-${type}`);
         if (!box) return;
 
         onValue(ref(database, `reviews/${type}`), snap => {
             box.innerHTML = '';
+            
+            // 每次載入時，先清空舊的搜尋緩存陣列中屬於這一個類別的資料
+            window.__reviews = window.__reviews.filter(item => item.category !== type);
 
             const data = snap.val();
             if (!data) return;
@@ -148,23 +157,34 @@ export function initReview() {
             Object.values(data)
                 .sort((a, b) => b.timestamp - a.timestamp)
                 .forEach(post => {
+                    
+                    // 1. 除錯修復：把即時留言推送到 window.__reviews，讓搜尋框找得到！
+                    window.__reviews.push({
+                        content: post.text,
+                        category: type,
+                        link: `#${type}`
+                    });
 
+                    // 2. 視覺美觀：還原帶有側邊金色線條與正確間距的卡片樣式
                     const div = document.createElement('div');
-                    div.style.padding = "10px";
-                    div.style.margin = "10px 0";
-                    div.style.background = "rgba(255,255,255,0.05)";
+                    div.className = 'review-card';
+                    div.style.cssText = 'background: rgba(255,255,255,0.05); padding: 15px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid var(--accent-gold);';
                     
                     const date = new Date(post.timestamp).toLocaleDateString();
+                    
+                    let imageHtml = '';
+                    if (post.imageUrl) {
+                        imageHtml = `<img src="${post.imageUrl}" alt="Review Image" style="max-width: 100%; max-height: 200px; border-radius: 4px; margin-top: 10px; border: 1px solid #444;">`;
+                    }
 
                     div.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                             <strong style="color: var(--accent-gold);"><i class="fas fa-user-circle"></i> ${post.author}</strong>
                             <small style="color: #888;">${date}</small>
                         </div>
-                        <div style="color: var(--mist-white); line-height: 1.5;">${post.text}</div>
-                        ${post.imageUrl ? `<img src="${post.imageUrl}" style="max-width:100%; border-radius: 4px; margin-top: 10px; border: 1px solid #444;">` : ''}
+                        <p style="margin: 0; color: var(--mist-white); line-height: 1.5;">${post.text}</p>
+                        ${imageHtml}
                     `;
-
                     box.appendChild(div);
                 });
         });
