@@ -1,54 +1,78 @@
 export function setupUI() {
-    // 回到頂部按鈕
-    const btt = document.getElementById('backToTop');
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) { btt.classList.add('visible'); } 
-        else { btt.classList.remove('visible'); }
-    });
-    btt.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 
-    // 字數限制計數器
+    const $ = (id) => document.getElementById(id);
+
+    // ================= Back to top =================
+    const btt = $('backToTop');
+
+    if (btt) {
+        window.addEventListener('scroll', () => {
+            btt.classList.toggle('visible', window.pageYOffset > 300);
+        });
+
+        btt.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // ================= Counter =================
     ['study', 'sightseeing', 'gourmet'].forEach(type => {
-        const input = document.getElementById(`input-${type}`);
-        const counter = document.getElementById(`counter-${type}`);
+        const input = $(`input-${type}`);
+        const counter = $(`counter-${type}`);
+        if (!input || !counter) return;
+
+        if (input.dataset.bound === "1") return;
+        input.dataset.bound = "1";
+
         input.addEventListener('input', () => {
-            let val = input.value;
-            if (val.length > 300) {
-                val = val.slice(0, 300);
-                input.value = val;
-            }
-            counter.textContent = `${val.length} / 300`;
+            let v = input.value || '';
+            if (v.length > 300) v = v.slice(0, 300);
+
+            input.value = v;
+            counter.textContent = `${v.length} / 300`;
         });
     });
 
-    // 註冊假表單
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        alert("Account creation function will be unlocked in the next session!");
-    });
+    // ================= Register =================
+    const registerForm = $('registerForm');
 
-    // Base64 混淆聯絡資訊 (防爬蟲) - 已移除電話，僅保留 Email
-    document.getElementById('revealContactBtn').addEventListener('click', function() {
-        const user = atob('dGlwc3lyb2FtaW5naW50aGV3b3JsZA==');
-        const domain = atob('Z21haWwuY29t');
-        const fullEmail = `${user}@${domain}`;
-        
-        const container = document.getElementById('contact-container');
-        container.innerHTML = `
-            <p style="margin-bottom: 10px;">
-                <a href="mailto:${fullEmail}" style="color: var(--accent-gold); text-decoration: none;">Email: ${fullEmail}</a>
-            </p>
-        `;
-    });
+    if (registerForm) {
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("Account creation function will be unlocked in the next session!");
+        });
+    }
 
-    // GA4 滑鼠懸停追蹤
-    const hoverTargets = document.querySelectorAll('.track-hover');
-    hoverTargets.forEach(target => {
-        target.addEventListener('mouseenter', function() {
+    // ================= Contact =================
+    const revealBtn = $('revealContactBtn');
+    const container = $('contact-container');
+
+    if (revealBtn && container) {
+        revealBtn.addEventListener('click', () => {
+            if (container.dataset.done === "1") return;
+            container.dataset.done = "1";
+
+            const user = atob('dGlwc3lyb2FtaW5naW50aGV3b3JsZA==');
+            const domain = atob('Z21haWwuY29t');
+
+            container.innerHTML = `
+                <p>
+                    <a href="mailto:${user}@${domain}" style="color: var(--accent-gold);">
+                        Email: ${user}@${domain}
+                    </a>
+                </p>
+            `;
+        });
+    }
+
+    // ================= GA4 =================
+    document.querySelectorAll('.track-hover').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            if (typeof gtag !== "function") return;
+
             gtag('event', 'hover_item', {
-                'item_name': target.getAttribute('data-name') || target.innerText,
-                'item_category': target.getAttribute('data-category') || 'General',
-                'browsed_from_homepage': 'true'
+                item_name: el.dataset.name || el.innerText,
+                item_category: el.dataset.category || 'General'
             });
         });
     });

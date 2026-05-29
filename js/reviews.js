@@ -1,90 +1,135 @@
-import { db, auth, authReady, ref, push, onValue } from "./firebase.js";
+import {
+    database,
+    ref,
+    push,
+    onValue,
+    storage,
+    storageRef,
+    uploadBytes,
+    getDownloadURL,
+    auth
+} from "./firebase.js";
 
-function triggerSuccessUI(btn) {
-    const originalText = btn.textContent;
-    btn.textContent = "Success!";
-    btn.classList.add('success');
-    setTimeout(() => {
-        btn.textContent = originalText;
-        btn.classList.remove('success');
-        startCooldown(btn);
-    }, 1500);
+let selectedFiles = {
+    sightseeing: null,
+    gourmet: null
+};
+
+function getUser() {
+    return auth.currentUser;
 }
 
-function startCooldown(button) {
-    let cooldownTime = 10; 
-    button.disabled = true;
-    const originalText = button.textContent;
-    const timer = setInterval(() => {
-        cooldownTime--;
-        button.textContent = `${cooldownTime}s`;
-        if (cooldownTime <= 0) {
-            clearInterval(timer);
-            button.disabled = false;
-            button.textContent = originalText;
-        }
-    }, 1000);
-}
+export function initReview() {
 
-export async function saveReview(type, btn, currentLang) {
-    try {
-        await authReady; // 等待匿名登入完成
-        if (!auth.currentUser) throw new Error("Not authenticated");
-    } catch {
-        return alert("System initializing secure connection. Please try again in 2 seconds.");
-    }
+    // ================= file upload =================
+    ['sightseeing', 'gourmet'].forEach(type => {
+        const input = document.getElementById(`file-${type}`);
+        const preview = document.getElementById(`preview-${type}`);
 
-    const contentInput = document.getElementById(`input-${type}`);
-    const rawContent = contentInput.value;
-    
-    if(!rawContent.trim()) return alert("Please enter some text.");
-    const safeContent = rawContent.trim().slice(0, 300);
-    
-    const dbRef = ref(db, `reviews/${type}`);
-    push(dbRef, {
-        content: safeContent,
-        lang: currentLang,
-        timestamp: Date.now()
-    }).then(() => {
-        contentInput.value = ""; 
-        document.getElementById(`counter-${type}`).textContent = "0 / 300";
-        triggerSuccessUI(btn); 
-    }).catch((error) => {
-        alert("Error saving review: " + error.message);
-    });
-}
+        if (!input || !preview) return;
 
-export function listenReviews(type, callback) {
-    const dbRef = ref(db, `reviews/${type}`);
-    onValue(dbRef, (snapshot) => {
-        const display = document.getElementById(`display-${type}`);
-        display.replaceChildren();
-        
-        const tempCategoryReviews = [];
+        input.addEventListener('change', e => {
+            const file = e.target.files?.[0];
+            if (!file) return;
 
-        snapshot.forEach((child) => {
-            const review = child.val();
-            const card = document.createElement('div');
-            card.className = 'review-card';
-            
-            const metaInfo = document.createElement('small');
-            metaInfo.textContent = `${new Date(review.timestamp).toLocaleDateString()} [${review.lang}]`;
-            
-            const messageBody = document.createElement('p');
-            messageBody.textContent = review.content;
-            
-            card.appendChild(metaInfo);
-            card.appendChild(messageBody);
-            display.prepend(card);
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Image too large (max 5MB)");
+                return;
+            }
 
-            tempCategoryReviews.push({
-                content: review.content,
-                category: type,
-                link: type === 'study' ? '#study' : '#travel'
-            });
+            selectedFiles[type] = file;
+
+            const reader = new FileReader();
+            reader.onload = ev => {
+                preview.innerHTML = `<img src="${ev.target.result}" style="max-width:100%;" />`;
+            };
+            reader.readAsDataURL(file);
         });
-        
-        // 將更新好的分類陣列傳回給主程式
-        callback(type, tempCategoryReviews);
+    });
+
+    // ================= publish =================
+    document.querySelectorAll('.publish-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+
+            const type = btn.dataset.type;
+            const input = document.getElementById(`input-${type}`);
+
+            if (!input || !input.value.trim()) return;
+
+            const user = getUser();
+            if (!user) return alert("Please login");
+
+            btn.disabled = true;
+
+            try {
+                let imageUrl = null;
+
+                const file = selectedFiles[type];
+                if (file) {
+                    const name = `${Date.now()}_${file.name}`;
+                    const refPath = storageRef(storage, `reviews/${type}/${name}`);
+
+                    const snap = await uploadBytes(refPath, file);
+                    imageUrl = await getDownloadURL(snap.ref);
+                }
+
+                await push(ref(database, `reviews/${type}`), {
+                    text: input.value.trim(),
+                    author: user.displayName || "Anonymous",
+                    uid: user.uid,
+                    timestamp: Date.now(),
+                    imageUrl
+                });
+
+                input.value = '';
+                selectedFiles[type] = null;
+
+                const counter = document.getElementById(`counter-${type}`);
+                if (counter) counter.textContent = "0 / 300";
+
+                const preview = document.getElementById(`preview-${type}`);
+                const fileInput = document.getElementById(`file-${type}`);
+
+                if (preview) preview.innerHTML = '';
+                if (fileInput) fileInput.value = '';
+
+            } catch (err) {
+                console.error(err);
+                alert("Publish failed");
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    });
+
+    // ================= realtime =================
+    ['study', 'sightseeing', 'gourmet'].forEach(type => {
+        const box = document.getElementById(`display-${type}`);
+        if (!box) return;
+
+        onValue(ref(database, `reviews/${type}`), snap => {
+            box.innerHTML = '';
+
+            const data = snap.val();
+            if (!data) return;
+
+            Object.values(data)
+                .sort((a, b) => b.timestamp - a.timestamp)
+                .forEach(post => {
+
+                    const div = document.createElement('div');
+                    div.style.padding = "10px";
+                    div.style.margin = "10px 0";
+                    div.style.background = "rgba(255,255,255,0.05)";
+
+                    div.innerHTML = `
+                        <strong>${post.author}</strong>
+                        <div>${post.text}</div>
+                        ${post.imageUrl ? `<img src="${post.imageUrl}" style="max-width:100%;">` : ''}
+                    `;
+
+                    box.appendChild(div);
+                });
+        });
     });
 }

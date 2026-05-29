@@ -10,49 +10,79 @@ export const staticSearchData = [
 ];
 
 export function setupSearch(searchInput, searchResults, getDynamicData) {
-    document.getElementById('ga4SearchForm').addEventListener('submit', e => { e.preventDefault(); });
 
-    searchInput.addEventListener('input', function() {
-        const val = this.value.toLowerCase();
+    const form = document.getElementById('ga4SearchForm');
+    if (form) {
+        form.addEventListener('submit', e => e.preventDefault());
+    }
+
+    if (!searchInput || !searchResults) return;
+
+    searchInput.addEventListener('input', () => {
+        const val = searchInput.value.toLowerCase().trim();
+
         searchResults.replaceChildren();
-        if(!val) { searchResults.style.display = 'none'; return; }
 
-        const dynamicSearchData = getDynamicData();
-        const filteredStatic = staticSearchData.filter(item => item.name.toLowerCase().includes(val));
-        const filteredDynamic = dynamicSearchData.filter(item => item.content.toLowerCase().includes(val));
-
-        if(filteredStatic.length > 0 || filteredDynamic.length > 0) {
-            searchResults.style.display = 'block';
-            
-            filteredStatic.forEach(item => {
-                const a = document.createElement('a');
-                a.href = item.link;
-                a.className = 'search-item';
-                const strong = document.createElement('strong'); strong.textContent = item.name;
-                const small = document.createElement('small'); small.textContent = ' School Info';
-                a.appendChild(strong); a.appendChild(small);
-                a.onclick = () => { searchResults.style.display = 'none'; searchInput.value = ''; };
-                searchResults.appendChild(a);
-            });
-
-            filteredDynamic.forEach(item => {
-                const a = document.createElement('a');
-                a.href = item.link;
-                a.className = 'search-item';
-                let snippet = item.content.length > 25 ? item.content.substring(0, 25) + '...' : item.content;
-                const strong = document.createElement('strong'); strong.textContent = `"${snippet}"`;
-                const small = document.createElement('small'); small.textContent = ` User Review in ${item.category.toUpperCase()}`;
-                a.appendChild(strong); a.appendChild(small);
-                a.onclick = () => { searchResults.style.display = 'none'; searchInput.value = ''; };
-                searchResults.appendChild(a);
-            });
-        } else {
+        if (!val) {
             searchResults.style.display = 'none';
+            return;
         }
+
+        const dynamic = getDynamicData?.() || [];
+
+        const staticMatches = staticSearchData.filter(i =>
+            i.name.toLowerCase().includes(val)
+        );
+
+        const dynamicMatches = dynamic.filter(i =>
+            (i.content || '').toLowerCase().includes(val)
+        );
+
+        if (staticMatches.length === 0 && dynamicMatches.length === 0) {
+            searchResults.style.display = 'none';
+            return;
+        }
+
+        searchResults.style.display = 'block';
+
+        staticMatches.forEach(item => {
+            const a = document.createElement('a');
+            a.className = 'search-item';
+            a.href = item.link;
+
+            a.innerHTML = `<strong>${item.name}</strong><small>School</small>`;
+
+            a.onclick = () => {
+                searchResults.style.display = 'none';
+                searchInput.value = '';
+            };
+
+            searchResults.appendChild(a);
+        });
+
+        dynamicMatches.forEach(item => {
+            const a = document.createElement('a');
+            a.className = 'search-item';
+            a.href = item.link || '#';
+
+            const snippet = (item.content || '').slice(0, 25);
+
+            a.innerHTML = `<strong>"${snippet}"</strong><small>${item.category || 'Review'}</small>`;
+
+            a.onclick = () => {
+                searchResults.style.display = 'none';
+                searchInput.value = '';
+            };
+
+            searchResults.appendChild(a);
+        });
     });
 
     document.addEventListener('click', (e) => {
-        if(!document.querySelector('.ga4-search-container').contains(e.target)) {
+        const container = document.querySelector('.ga4-search-container');
+        if (!container) return;
+
+        if (!container.contains(e.target)) {
             searchResults.style.display = 'none';
         }
     });
