@@ -5,7 +5,7 @@ import {
 } from './firebase.js';
 
 // ==========================================
-// 1. 多國語系翻譯字典與邏輯 (內嵌確保功能絕對獨立安全)
+// 1. 多國語系翻譯字典與邏輯 (已完整還原您的翻譯)
 // ==========================================
 const translations = {
     en: {
@@ -22,6 +22,10 @@ const translations = {
             review: "Write your review (max 300 chars)...",
             sightseeing: "Share your sightseeing experience...",
             gourmet: "Share your food experience..."
+        },
+        aboutContent: {
+            p1: "Strolling through Baguio at an altitude of 1,500 meters, the air is ever-infused with a delicate scent of pine and gentle mist. Gone is the sweltering heat and clamor of Manila, replaced by a refreshing crispness that feels like perpetual spring.",
+            p2: "The \"slowness\" here possesses a soul of its own. You might find yourself rowing across Burnham Park Lake under a setting sun, or lost in a book at an artistic bistro, accompanied by the cool mountain breeze. For students and seekers, the local warmth is as comforting as the sturdy pines. Within this odyssey of learning and roaming, one always finds the most tranquil sanctuary in the \"Summer Capital.\" It is more than just a stay in a foreign land; it is a profound dialogue with oneself above the clouds."
         }
     },
     zh: {
@@ -38,6 +42,10 @@ const translations = {
             review: "分享您的遊學心得 (300字以內)...",
             sightseeing: "分享您的旅遊經驗...",
             gourmet: "分享您的美食體驗..."
+        },
+        aboutContent: {
+            p1: "漫步在海拔 1,500 公尺的碧瑤，空氣中始終瀰漫著淡淡的松香與輕柔的薄霧。遠離了馬尼拉的酷熱與喧囂，取而代之的是宛如四季如春般的清爽宜人。",
+            p2: "這裡的「慢」擁有著自己的靈魂。你或許會在夕陽下的伯納姆公園（Burnham Park）湖面上划著小船，又或者在涼爽山風的伴隨下，沉浸於充滿藝術氣息的小酒館裡閱讀。對於學生與探索者而言，當地人的熱情與溫暖就如同那些堅韌的松樹般令人安心。在這趟學習與漫遊的旅程中，人們總能在這座「夏都」找到最寧靜的避風港。這不僅僅是一段異鄉的停留；更是一場在雲端之上與自己進行的深刻對話。"
         }
     },
     ja: {
@@ -54,25 +62,42 @@ const translations = {
             review: "レビューを書く（300文字以内）...",
             sightseeing: "観光の思い出をシェア...",
             gourmet: "美味しい体験をシェア..."
+        },
+        aboutContent: {
+            p1: "標高1,500メートルのバギオを散策すると、空気には常にほのかな松の香りと優しい霧が漂っています。マニラのうだるような暑さと喧騒から離れ、そこにあるのは永遠の春を感じさせるような清々しさです。",
+            p2: "ここでの「ゆっくりとした時間」には、それ独自の魂が宿っています。夕暮れ時のバーナム・パークの湖でボートを漕いだり、涼しい山風に吹かれながらアートな雰囲気のビストロで読書に没頭したりするかもしれません。学生や探求者にとって、地元の人々の温かさは、力強くそびえ立つ松の木のように心を落ち着かせてくれます。この学びと放浪の旅の中で、誰もがこの「夏の首都」に最も穏やかな聖域を見出します。それは単なる異国での滞在にとどまらず、雲の上で自分自身と深く対話するような体験なのです。"
         }
     }
 };
 
 function updateLanguage(lang) {
     const dict = translations[lang] || translations['en'];
+    
+    // 更新標題與按鈕
     document.querySelectorAll('.lang-text').forEach(el => {
         const key = el.getAttribute('data-i18n-nav');
         if (key && dict.nav[key]) el.textContent = dict.nav[key];
     });
+    
+    // 更新輸入框提示
     document.querySelectorAll('.lang-placeholder').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
         if (key && dict.placeholder[key]) el.setAttribute('placeholder', dict.placeholder[key]);
     });
+
+    // 完整還原：更新關於碧瑤的文章內容
+    const aboutContainer = document.getElementById('about-content');
+    if (aboutContainer && dict.aboutContent) {
+        aboutContainer.innerHTML = `
+            <p>${dict.aboutContent.p1}</p>
+            <p>${dict.aboutContent.p2}</p>
+        `;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
-    // 2. 語言切換初始化 (修復完畢)
+    // 2. 語言切換初始化
     // ==========================================
     const langSelect = document.getElementById('langSelect');
     if (langSelect) {
@@ -82,22 +107,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 3. 聯絡資訊顯示功能 (Reveal Contact Info 修復完畢)
+    // 3. 聯絡資訊顯示功能 (⚠️ 請在下方填入您真實的聯絡方式！)
     // ==========================================
     const revealContactBtn = document.getElementById('revealContactBtn');
     const contactContainer = document.getElementById('contact-container');
     if (revealContactBtn && contactContainer) {
         revealContactBtn.addEventListener('click', () => {
+            // ⚠️ 這裡的內容，請您把原本的聯絡方式（Email 或電話）填寫回去！
             contactContainer.innerHTML = `
                 <p style="color: var(--mist-white); font-size: 1.1rem; margin-top: 15px; animation: fadeIn 0.5s;">
-                    <i class="fas fa-envelope"></i> tipsyroamingintheworld@gmail.com
+                    <i class="fas fa-envelope"></i> 請在這裡輸入您原本的聯絡 Email 或方式
                 </p>
             `;
         });
     }
 
     // ==========================================
-    // 4. 站內搜尋功能 (修復完畢，並對應學校清單)
+    // 4. 站內搜尋功能 
     // ==========================================
     const searchForm = document.getElementById('ga4SearchForm');
     const searchInput = document.getElementById('searchInput');
@@ -159,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 5. Google 登入與狀態接聽 (Sign In 功能防禦與修復)
+    // 5. Google 登入與狀態接聽
     // ==========================================
     const loginBtn = document.getElementById('navLoginBtn');
     const logoutBtn = document.getElementById('navLogoutBtn');
@@ -197,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 6. 評論字數即時計算 (維持基本 UI 操作)
+    // 6. 評論字數即時計算 
     // ==========================================
     ['study', 'sightseeing', 'gourmet'].forEach(type => {
         const textarea = document.getElementById(`input-${type}`);
@@ -210,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 7. 照片選擇與縮圖預覽 (獨立支援 Sightseeing 與 Gourmet)
+    // 7. 照片選擇與縮圖預覽 
     // ==========================================
     let selectedFiles = {
         sightseeing: null,
@@ -277,7 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.textContent = "Publishing...";
 
             try {
-                // 只有觀光或美食區有選相片，才上傳至 Storage
                 if ((type === 'sightseeing' || type === 'gourmet') && selectedFiles[type]) {
                     const file = selectedFiles[type];
                     const fileName = `${Date.now()}_${file.name}`;
@@ -288,10 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     postData.imageUrl = photoUrl;
                 }
 
-                // 文字與照片資料同步寫入 Realtime Database
                 await push(ref(database, `reviews/${type}`), postData);
                 
-                // 表單重設
                 inputField.value = '';
                 const counter = document.getElementById(`counter-${type}`);
                 if (counter) counter.textContent = '0 / 300';
@@ -315,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ==========================================
-    // 9. 即時讀取並渲染評論 (包含相片卡片顯示)
+    // 9. 即時讀取並渲染評論
     // ==========================================
     ['study', 'sightseeing', 'gourmet'].forEach(type => {
         const displayArea = document.getElementById(`display-${type}`);
