@@ -12,8 +12,8 @@ const firebaseConfig = {
     projectId: "tipsyroaming-c763c",
     storageBucket: "tipsyroaming-c763c.firebasestorage.app",
     messagingSenderId: "499606815652",
-    appId: "1:499606815652:web:77d9490f4c4cb63964b731"
-    measurementId: "G-DH97F1E33H"
+    appId: "1:499606815652:web:77d9490f4c4cb63964b731",
+    measurementId: "G-DH97F1E33H",
 };
 
 // 啟動各項服務
