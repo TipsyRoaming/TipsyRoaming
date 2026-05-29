@@ -375,3 +375,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// ==========================================
+    // 10. 天氣與假日資訊自動載入 (Weather & Holidays)
+    // ==========================================
+    const weatherEl = document.getElementById('baguio-weather');
+    if (weatherEl) {
+        // 呼叫 Open-Meteo API 獲取碧瑤 (Baguio) 的即時天氣
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=16.4164&longitude=120.5931&current_weather=true')
+            .then(res => res.json())
+            .then(data => {
+                const temp = data.current_weather.temperature;
+                weatherEl.innerHTML = `<i class="fas fa-sun" style="color: #FDB813;"></i> ${temp}°C`;
+            })
+            .catch(err => {
+                console.error('Weather fetch error:', err);
+                weatherEl.textContent = 'N/A';
+            });
+    }
+
+    const holidayEl = document.getElementById('baguio-holiday');
+    if (holidayEl) {
+        // 這裡為您補上菲律賓近期的重要國定假日，您也可以隨時修改文字
+        holidayEl.innerHTML = `<i class="fas fa-calendar-alt" style="color: var(--lazy-purple);"></i> Jun 12 (Independence Day)`;
+    }
