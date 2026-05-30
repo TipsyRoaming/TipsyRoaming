@@ -137,3 +137,10 @@ footer { text-align: center; padding: 60px 40px; color: #666; font-size: 0.85rem
     border-radius: 6px;
     border: 1px solid #444;
 }
+
+.logo-circle {
+    width: 150px;   /* 寬度可自行調整 */
+    height: 150px;  /* 高度可自行調整，保持與寬度一樣才會是正圓 */
+    border-radius: 50%;
+    object-fit: cover;
+}
